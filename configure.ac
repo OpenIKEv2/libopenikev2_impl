@@ -144,20 +144,6 @@ AC_CHECK_LIB(
     []
 )
 
-
-#####Check if libnetlink3 is installed
-AC_CHECK_LIB(
-    nl-3, 
-    main,
-    [], 
-    [
-        AC_MSG_RESULT(** ERROR ** You must install libnetlink3 in order to compile libopenikev2_impl.)
-        exit
-    ], 
-    []
-)
-
-
 #####Check if openssl is installed
 AC_CHECK_LIB(
     crypto, 
