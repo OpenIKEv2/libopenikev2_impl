@@ -33,8 +33,10 @@
 #include "policy.h"
 
 extern "C" {
-#include <linux/pfkeyv2.h>
-#include <assert.h>
+    /* This header is required to assure it is included before any linux/ include */
+    #include <netinet/in.h>
+    #include <linux/pfkeyv2.h>
+    #include <assert.h>
 }
 
 namespace openikev2 {

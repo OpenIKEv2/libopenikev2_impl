@@ -31,6 +31,8 @@
 #include "policy.h"
 #include "libnetlink.h"
 
+/* This header is required to assure it is included before any linux/ include */
+#include <netinet/in.h>
 #include <linux/xfrm.h>
 
 namespace openikev2 {
