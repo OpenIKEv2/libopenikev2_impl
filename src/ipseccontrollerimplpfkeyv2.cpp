@@ -608,7 +608,7 @@ namespace openikev2 {
 
         // Creates the inbound IPsec SA
         this->pfkeyAddUpdateIpsecSa(
-            SADB_ADD,
+            SADB_UPDATE,
             dst,
             src,
             childsa.ipsec_protocol,
