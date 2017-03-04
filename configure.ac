@@ -155,6 +155,17 @@ AC_CHECK_LIB(
     ], 
     []
 )
+AC_CHECK_LIB(
+    crypto, 
+    EVP_MD_CTX_cleanup,
+    [], 
+    [
+        AC_MSG_RESULT(** ERROR ** Your version of libcrypto does not seem to have the EVP_MD_CTX symbol. Please ensure you are using openssl 1.0.x.)
+        exit
+    ], 
+    []
+)
+
 AC_CHECK_HEADERS(
     openssl/engine.h, 
     [], 
