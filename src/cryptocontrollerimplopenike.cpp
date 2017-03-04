@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -58,12 +58,12 @@ namespace openikev2 {
   auto_ptr<DiffieHellman> CryptoControllerImplOpenIKE::getDiffieHellman( Enums::DH_ID group ) {
     if (group < 19)
         return auto_ptr<DiffieHellman> ( new DiffieHellmanOpenSSL( group ) );
-    
+
     #ifdef HAVE_OPENSSL_ECDH_H
     else
         return auto_ptr<DiffieHellman> ( new DiffieHellmanEllipticCurve( group ) );
-    #endif    
-    
+    #endif
+
   }
 
   auto_ptr< Cipher > CryptoControllerImplOpenIKE::getCipher( Proposal & proposal, auto_ptr< ByteArray > encr_key, auto_ptr< ByteArray > integ_key ) {

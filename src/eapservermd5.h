@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -28,7 +28,7 @@ namespace openikev2 {
 
     /**
      This class implements the EapServer abstract class, using the method MD5-CHALLENGE (only for example purposes)
-     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class EapServerMd5 : public EapServer {
             /****************************** ATTRIBUTES ******************************/
@@ -43,7 +43,7 @@ namespace openikev2 {
              * Creates a new EapServerMd5
              */
             EapServerMd5();
-            
+
             /**
              * Loads the user/password information from "filename"
              * @param filename File name where user/password information is stored.
@@ -62,7 +62,7 @@ namespace openikev2 {
              * @param filename Filename where the user DB is located
              */
             EapServerMd5( string filename );
-            
+
             virtual auto_ptr<Payload_EAP> generateInitialEapRequest( const ID& peer_id  );
             virtual auto_ptr<Payload_EAP> processEapResponse( const Payload_EAP& eap_response );
             virtual vector<EapPacket::EAP_TYPE> getSupportedMethods( ) const;

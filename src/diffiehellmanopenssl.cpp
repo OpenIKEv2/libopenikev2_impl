@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -46,10 +46,10 @@ namespace openikev2 {
         "E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7ED"
         "EE386BFB5A899FA5AE9F24117C4B1FE649286651ECE65381"
         "FFFFFFFFFFFFFFFF",
-        
+
         /* 3 */
         NULL,
-        
+
         /* 4 */
         NULL,
 

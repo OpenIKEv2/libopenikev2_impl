@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -59,7 +59,7 @@ namespace openikev2 {
 
         for ( vector<EapServer*>::const_iterator it = this->eap_servers->begin(); it != this->eap_servers->end(); it++ )
             oss << ( *it )->toStringTab( tabs + 1 );
-        
+
         oss << Printable::generateTabs( tabs ) << "}\n";
 
         return oss.str();
@@ -226,14 +226,14 @@ namespace openikev2 {
             this->current_eap_server = it->second;
         }
 
-        return this->current_eap_server->generateInitialEapRequest( peer_id ); 
+        return this->current_eap_server->generateInitialEapRequest( peer_id );
     }
 
     auto_ptr< Payload_EAP > AuthenticatorOpenIKE::processEapResponse( const Payload_EAP & eap_response, const ID& peer_id ) {
 
 
 /*        if(eap_response.getEapPacket().eap_type == EapPacket::EAP_TYPE_NAK){
-            EapPacket::EAP_TYPE metodo_eap_solicitado = (EapPacket::EAP_TYPE) *(eap_response.getEapPacket().eap_type_data->getRawPointer());            
+            EapPacket::EAP_TYPE metodo_eap_solicitado = (EapPacket::EAP_TYPE) *(eap_response.getEapPacket().eap_type_data->getRawPointer());
             cout << "Metodo solicitado por peer: " << EapPacket::EAP_TYPE_STR( metodo_eap_solicitado ) << endl;
             map<EapPacket::EAP_TYPE, EapServer*>::iterator it = this->eap_servers_map.find( metodo_eap_solicitado );
 
@@ -242,7 +242,7 @@ namespace openikev2 {
                 return auto_ptr< Payload_EAP > ( NULL );
             }
             // save the current EapServer to be used
-            this->current_eap_server = it->second;            
+            this->current_eap_server = it->second;
             return this->current_eap_server->generateInitialEapRequest( peer_id );
         }
 */
@@ -253,14 +253,14 @@ namespace openikev2 {
 		if (p.get() == NULL){
             map<EapPacket::EAP_TYPE, EapServer*>::iterator it = this->eap_servers_map.begin();
             for (;it != this->eap_servers_map.end() || (it->second != this->current_eap_server)  ; it++){
-              
+
             }
 
             if (it != this->eap_servers_map.end()) {
 
                 it++;
                 if (it != this->eap_servers_map.end()){
-                    this->current_eap_server = it->second;    
+                    this->current_eap_server = it->second;
                 }
                 else{
                     Log::writeMessage( "AuthenticatorOpenIKE", "No more EAP method present. Authentication error.", Log::LOG_ERRO, true );

@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -27,7 +27,7 @@ namespace openikev2 {
 
     /**
      This class implements SocketAddress abstract class using standard sockets.
-     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class SocketAddressPosix: public SocketAddress {
             /****************************** ATTRIBUTES ******************************/
@@ -44,7 +44,7 @@ namespace openikev2 {
              * @param port Port number
              */
             SocketAddressPosix( auto_ptr<IpAddress> address, uint16_t port );
-            
+
             /**
              * Creates a new SocketAddressPosix object cloning other
              * @param other Other SocketAddress object
@@ -78,7 +78,7 @@ namespace openikev2 {
             virtual void setIpAddress( auto_ptr<IpAddress> ip_address);
 
             virtual void setPort( uint16_t port );
-            
+
             virtual auto_ptr<SocketAddress> clone() const;
 
             virtual string toStringTab( uint8_t tabs ) const;

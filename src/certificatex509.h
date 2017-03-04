@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -37,17 +37,17 @@ namespace openikev2 {
 
     /**
         This class implements the Certificate interface using X509 certificates with openssl library
-        @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj.fernandez@dif.um.es, alejandro_perez@dif.um.es>
+        @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj@um.es, alex@um.es>
     */
     class CertificateX509 : public Printable {
         friend class CertificateControllerOpenIKE;
-        
+
             /****************************** ATTRIBUTES ******************************/
         public:
             X509* certificate;                          /**< Openssl internal representation of the X509 certificate */
             EVP_PKEY* private_key;                      /**< Openssl internal representation of the private key (RSA or DSA) */
             EVP_PKEY* public_key;                       /**< Openssl internal representation of the public key (RSA or DSA) */
-            
+
             /****************************** METHODS ******************************/
         protected:
 
@@ -69,13 +69,13 @@ namespace openikev2 {
              * @param der_binary_representation Buffer containing the DER encoding of the X509 certificate
              */
             CertificateX509( ByteBuffer& der_binary_representation );
-            
+
             /**
              * Creates a new X509 certificate cloning its parameters from another one
              * @param other Another X509 certificate
              */
             CertificateX509( const CertificateX509& other );
-            
+
             /**
              * Indicates if this certificate is the issuer of another one (looking in the subject and issuer fields of the X509 structure)
              * @param other Other certificate
@@ -84,16 +84,16 @@ namespace openikev2 {
             virtual bool isIssuerOf( const CertificateX509 &other ) const;
 
             virtual string getSubjectName() const;
-            
+
             virtual string getIssuerName() const;
-            
+
             /**
              * Indicates if the certificate has the ID
              * @param id ID to be checked
              * @return TRUE if the certificate has the indicated ID. FALSE otherwise
              */
             virtual bool hasId( const ID& id) const;
-            
+
             /**
              * Gets the DER encoding of the Subject name
              * @return The DER encoded subject name
@@ -111,21 +111,21 @@ namespace openikev2 {
              * @return The public key SHA1 hash (20 bytes)
              */
             virtual auto_ptr<ByteArray> getPublicKeyHash( ) const;
-            
+
             /**
              * Gets the entire certificate SHA1 hash
              * @return The certificate fingerprint (20 bytes)
              */
             virtual auto_ptr<ByteArray> getFingerPrint() const;
-            
+
             /**
              * Gets the public key
              * @return The public key
              */
             virtual auto_ptr<ByteArray> getPublicKey( ) const;
-            
+
             virtual auto_ptr<Payload_CERT> getPayloadCert();
-            
+
             virtual bool hasPrivateKey() const;
 
             virtual auto_ptr<ByteArray> signData( const ByteArray& data ) const;
@@ -133,13 +133,13 @@ namespace openikev2 {
             virtual bool verifyData( const ByteArray& data, const ByteArray& signature );
 
             virtual Enums::AUTH_METHOD getAuthMethod() const;
-            
+
             virtual auto_ptr<CertificateX509> clone() const;
 
             virtual void getBinaryRepresentation( ByteBuffer& byte_buffer );
 
             virtual string toStringTab( uint8_t tabs ) const ;
-            
+
             virtual X509* getInternalRepresentation() const;
 
             virtual ~CertificateX509();

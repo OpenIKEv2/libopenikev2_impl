@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -55,7 +55,7 @@ namespace openikev2 {
 
         if (this->match_type)
             oss <<  Printable::generateTabs( tabs + 1 ) << "id_type=[" << Enums::ID_TYPE_STR(this->id_type) << "]" << endl;
-        
+
         oss << Printable::generateTabs( tabs ) << "}\n";
 
         return oss.str();

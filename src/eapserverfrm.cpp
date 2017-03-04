@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -37,7 +37,7 @@ namespace openikev2 {
         this->aaa_server_addr = aaa_server_addr;
         this->aaa_server_port = aaa_server_port;
         this->aaa_server_secret = aaa_server_secret;
-                
+
         this->eap_sm = EapSm::getEapSmFrm(aaa_server_addr, aaa_server_port, aaa_server_secret);
     }
 

@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -57,7 +57,7 @@ namespace openikev2 {
         // Update the src address in the IkeSa
         auto_ptr<IpAddress> old_dst_address = ike_sa.peer_addr->getIpAddress().clone();
         ike_sa.peer_addr = message.getSrcAddress().clone();
-        
+
         // Update SAs and policies
         IpsecController::updateIpsecSaAddresses( *old_dst_address, message.getSrcAddress().getIpAddress() );
         IpsecController::updateIpsecPolicyAddresses( *old_dst_address, message.getSrcAddress().getIpAddress() );

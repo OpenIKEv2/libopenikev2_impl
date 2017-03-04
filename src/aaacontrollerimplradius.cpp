@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -41,7 +41,7 @@ namespace openikev2 {
 
         RandomOpenSSL random;
         this->seq_number = random.getRandomInt32( 1, 50000 );
-        
+
         this->mutex_senders_map = ThreadController::getMutex();
 
         this->socket.reset( new UdpSocket() );
@@ -78,7 +78,7 @@ namespace openikev2 {
         RadiusAttribute* state_attribute = NULL;
         if ( eap_sender.aaa_radius_response.get() != NULL )
            state_attribute = eap_sender.aaa_radius_response->getAttribute( RadiusAttribute::RADIUS_ATTR_STATE );
-            
+
         request->addAttribute( state_attribute->clone() );
 
         // Sends the messate to the RADIUS server
@@ -87,7 +87,7 @@ namespace openikev2 {
 
 
 
-    
+
     void AAAControllerImplRadius::sendRadiusMessage( auto_ptr<RadiusMessage> radius_message, AAASenderRadius& eap_sender ) {
 
         auto_ptr<IpAddress> server_ip_address ( new IpAddressOpenIKE( eap_sender.aaa_server_addr ) );
@@ -117,10 +117,10 @@ namespace openikev2 {
 
         eap_sender.aaa_radius_response = radius_message;
         senders_map[ radius_message->identifier ] = &eap_sender;
-        
+
         // TODO: Hacer timeout
         eap_sender.aaa_semaphore->wait();
-        
+
     }
 
     auto_ptr<RadiusMessage> AAAControllerImplRadius::receiveRadiusMessage( ) {
@@ -165,7 +165,7 @@ namespace openikev2 {
         radius_message->getBinaryRepresentation( byte_buffer );
 
         auto_ptr<ByteArray> secret ( new ByteArray( eap_sender->aaa_server_secret.data(), eap_sender->aaa_server_secret.size() ) );
-        
+
         // Computes the HMAC
         PseudoRandomFunctionOpenSSL prf( Enums::PRF_HMAC_MD5 );
         auto_ptr<ByteArray> hmac = prf.prf( *(secret.get()), byte_buffer );
@@ -180,7 +180,7 @@ namespace openikev2 {
 
 
     void AAAControllerImplRadius::receiveEapMessage( ) {
-               
+
     // Waits for the response
         auto_ptr<RadiusMessage> response = this->receiveRadiusMessage( );
 
@@ -195,7 +195,7 @@ namespace openikev2 {
         AAASenderRadius* eap_sender = it->second;
 
         auto_ptr<ByteArray> secret ( new ByteArray( eap_sender->aaa_server_secret.data(), eap_sender->aaa_server_secret.size() ) );
-        
+
         // process the MS-MPPE attributes (If access accept response
         if ( response->code == RadiusMessage::RADIUS_CODE_ACCESS_ACCEPT )
             eap_sender->aaa_msk = this->getMsk( *response, *(eap_sender->aaa_radius_request) , *secret);
@@ -206,7 +206,7 @@ namespace openikev2 {
         if ( eap_attributes.size() == 0 ){
             eap_sender->aaa_radius_response.reset(NULL);
             return;
-        } 
+        }
         // Creates the Payload_EAP
         ByteBuffer temp( eap_attributes.size() * 256 );
         for ( vector<RadiusAttribute*>::iterator it = eap_attributes.begin(); it != eap_attributes.end(); it++ )
@@ -308,9 +308,9 @@ namespace openikev2 {
 
         uint8_t length = decrypted_data->readInt8();
         return decrypted_data->readByteArray( length );
-    }    
+    }
 
-    
+
     void AAAControllerImplRadius::run( ) {
         Log::writeLockedMessage( "AAAController", "Start: Thread ID=[" + intToString( thread_id ) + "]", Log::LOG_THRD, true );
 

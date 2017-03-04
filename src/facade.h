@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -48,7 +48,7 @@ namespace openikev2 {
 
     /**
         This class is a facade of libopenikev2_impl
-        @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+        @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class Facade {
         protected:
@@ -59,19 +59,19 @@ namespace openikev2 {
             static auto_ptr<LogImplOpenIKE> log_impl;
             static auto_ptr<AlarmControllerImplOpenIKE> alarm_controller_impl;
             static auto_ptr<IkeSaControllerImplOpenIKE> ike_sa_controller_impl;
-            
+
         public:
             /**
              * Loads the controllers and make the basic initialization
              * @param log_filename Log output file
              */
             static void initialize(string log_filename);
-            
+
             /**
              * Starts the main threads
              */
             static void startThreads();
-            
+
             /**
              * Makes finalization tasks
              */
@@ -106,7 +106,7 @@ namespace openikev2 {
              * @param dst_tunnel Destination tunnel address (ommited when transport mode is selected)
              */
             static void createIpsecPolicy( string src_selector, uint16_t src_port, string dst_selector, uint16_t dst_port, uint8_t ip_protocol, Enums::DIRECTION direction = Enums::DIR_ALL, Enums::POLICY_ACTION action = Enums::POLICY_ALLOW, uint32_t priority = 1000, Enums::PROTOCOL_ID ipsec_protocol = Enums::PROTO_NONE, Enums::IPSEC_MODE mode = Enums::TRANSPORT_MODE, string src_tunnel = "", string dst_tunnel = "" , bool autogen = false, bool sub = false  );
-            
+
             static void deleteIpsecPolicy( string src_selector, uint16_t src_port, string dst_selector, uint16_t dst_port, uint8_t ip_protocol, Enums::DIRECTION direction);
 
             /**

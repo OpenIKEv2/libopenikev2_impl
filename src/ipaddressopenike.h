@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -37,11 +37,11 @@ namespace openikev2 {
         @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez
     */
     class IpAddressOpenIKE : public IpAddress {
-        
+
             /****************************** ATTRIBUTES ******************************/
         protected:
             sockaddr_storage address;                   /**< System address representation */
-                    
+
             /****************************** METHODS ******************************/
         public:
             /**
@@ -55,14 +55,14 @@ namespace openikev2 {
              * @param family Address family
              * @param data Address data
              */
-            IpAddressOpenIKE( Enums::ADDR_FAMILY family, auto_ptr<ByteArray> data);                        
-            
+            IpAddressOpenIKE( Enums::ADDR_FAMILY family, auto_ptr<ByteArray> data);
+
             /**
              * Creates a new IpAddressOpenIKE, setting its family and the address data to ANY
              * @param family Address family
              */
-            IpAddressOpenIKE( Enums::ADDR_FAMILY family );                        
-            
+            IpAddressOpenIKE( Enums::ADDR_FAMILY family );
+
             /**
              * Creates a new IpAddressOpenIKE, cloning another one
              * @param other Other IpAddressOpenIKE object
@@ -75,7 +75,7 @@ namespace openikev2 {
              * @return A new ANY address for the indicated family
              */
             static auto_ptr<IpAddress> getAnyAddr(Enums::ADDR_FAMILY family);
-            
+
             virtual uint16_t getAddressSize() const;
 
             virtual Enums::ADDR_FAMILY getFamily() const ;

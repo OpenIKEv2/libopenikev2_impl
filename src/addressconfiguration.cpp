@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -39,19 +39,19 @@ namespace openikev2 {
 	    	Log::writeLockedMessage( "AddressConfiguration", "Deleting address configuration: Rol=[IRAC] Address=[" + this->assigned_address->toString() + "]", Log::LOG_INFO, true );
 
 	    	if ( assigned_address->getFamily() == Enums::ADDR_IPV4 ) {
-            
+
         	//pedro
         	// Remove assigned address
 
         		network_controller.deleteAddress( *assigned_address , this->assigned_prefixlen, this->ifname );
-            
+
                 // Remove router rules
 
                 	network_controller.deleteRoute ( *IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV4),0,*default_gw,1,this->ifname);
-                
+
                 	network_controller.deleteRoute ( *route_dst, route_prefixlen, *assigned_address, 0, ifname);
                 	//network_controller.deleteRoute ( *route_dst, route_prefixlen, *assigned_default_gw, 0, ifname);
-                
+
                 	network_controller.createRoute ( *IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV4),*IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV4), 0, *default_gw, 0 , ifname );
             	}
             	else if ( assigned_address->getFamily() == Enums::ADDR_IPV6 ) {
@@ -59,19 +59,19 @@ namespace openikev2 {
                 	//close( this->tun_fd );
 
         		network_controller.deleteAddress( *assigned_address , this->assigned_prefixlen, this->ifname );
-            
+
                 // Remove router rules
 
                 	network_controller.deleteRoute ( *IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV6),0,*default_gw,1,this->ifname);
-                
+
                 	network_controller.deleteRoute ( *route_dst, route_prefixlen, *assigned_address, 0, ifname);
                 	//network_controller.deleteRoute ( *route_dst, route_prefixlen, *assigned_default_gw, 0, ifname);
-                
+
                 	network_controller.createRoute ( *IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV6),*IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV6), 0, *default_gw, 0 , ifname );
 
 
             	}
-	    }	
+	    }
         }
         else if (this->role == CONFIGURATION_IRAS) {
             Log::writeLockedMessage( "AddressConfiguration", "Deleting address configuration: Rol=[IRAS] Address=[" + this->assigned_address->toString() + "]", Log::LOG_INFO, true );

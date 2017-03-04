@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -83,19 +83,19 @@ RadvdWrapper::RadvdWrapper( string config_file ) {
 void RadvdWrapper::notifyBusEvent( const BusEvent& event ) {
         // if CHILD_SA_EVENT
 #ifdef HAVE_IPv6
-        
+
 
 	if ( event.type == BusEvent::CHILD_SA_EVENT ) {
             BusEventChildSa& busevent = ( BusEventChildSa& ) event;
             if ( busevent.child_sa_event_type == BusEventChildSa::CHILD_SA_ESTABLISHED ){
                 if (busevent.ike_sa.peer_addr->getIpAddress().getFamily() == Enums::ADDR_IPV6)  {
-			this->associated_ike_sa = &(busevent.ike_sa);              	
+			this->associated_ike_sa = &(busevent.ike_sa);
 			this->periodic_send_alarm = new Alarm( ( *this ), 1000 );
 			this->periodic_send_alarm->reset();
 
                 	AlarmController::addAlarm(*this->periodic_send_alarm);
-			
-		}       
+
+		}
 	    }
  	}
 #endif
@@ -113,7 +113,7 @@ void RadvdWrapper::notifyAlarm ( Alarm& alarm ) {
 
 	sendRA((struct in6_addr*) &(sa_in6->sin6_addr.s6_addr));
 	// REPARAR ESTO, INTERBLOQUEO
-        //alarm.reset();    
+        //alarm.reset();
 	//AlarmController::removeAlarm(alarm);
         //Alarm* alarm_ptr = &alarm;
         //delete alarm_ptr;
@@ -137,9 +137,9 @@ int RadvdWrapper::sendRA(struct in6_addr *dest){
 			send_ra(sock, iface, dest);
 			//Log::writeLockedMessage( "NetworkController", "Radvd sends a Router Advertisement to peer.", Log::LOG_INFO, true );
 			cout << "radvd: Radvd sends a Router Advertisement to peer with address=";
-			
+
 			auto_ptr<ByteBuffer> dest_temp ( new ByteBuffer ( 16 ) );
-		
+
 			char* pointer = (char *) dest;
 			for ( uint8_t i = 0; i < 16 ; i++ ) {
 			    dest_temp->writeInt8( pointer[i] );
@@ -166,7 +166,7 @@ int  RadvdWrapper::readin_config(const char *fname) {
 		//flog(LOG_ERR, "error parsing or activating the config file: %s", fname);
 		return (-1);
 	}
-	
+
 	fclose(yyin);
 	return 0;
 }

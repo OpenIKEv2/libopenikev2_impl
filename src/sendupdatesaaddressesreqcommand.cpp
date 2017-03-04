@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -48,16 +48,16 @@ namespace openikev2 {
         }
 
         auto_ptr<IpAddress> old_src_address = ike_sa.my_addr->getIpAddress().clone();
-        
+
         // Update the IPsec SAs
         IpsecController::updateIpsecSaAddresses(*old_src_address, *this->new_sa_address);
-        
+
         // Update the IPsec Policies
         IpsecController::updateIpsecPolicyAddresses(*old_src_address, *this->new_sa_address);
-        
+
         // Update the src address in the IkeSa
         ike_sa.my_addr->setIpAddress( this->new_sa_address->clone() );
-        
+
         // Create the UPDATE_SA_ADDRESSES notification
         auto_ptr<Payload_NOTIFY> notify_request ( new Payload_NOTIFY( ( Payload_NOTIFY::NOTIFY_TYPE ) 16400, Enums::PROTO_NONE ) );
 

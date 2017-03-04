@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -43,8 +43,8 @@ extern "C" {
 namespace openikev2 {
     /**
      This class represents an EAP state machine from Hostapd code
-     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
-    */    
+     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
+    */
     class EapSm : public AAASenderRadius {
             /****************************** ATTRIBUTES ******************************/
         protected:
@@ -63,14 +63,14 @@ namespace openikev2 {
             auto_ptr<EapPacket> aaa_eap_packet_received;
             auto_ptr<RadiusMessage> aaa_radius_request;
             auto_ptr<RadiusMessage> aaa_radius_response;
-            
+
             /****************************** METHODS ******************************/
         protected:
 	    static int get_eap_user (void *ctx, const u8 *identity, size_t identity_len,
 			    int phase2, struct eap_user *user);
 	    static const char * get_eap_req_id_text (void *ctx, size_t *len);
 
-        
+
 
 
             /**
@@ -79,40 +79,40 @@ namespace openikev2 {
              * @param frm_server_data Data for the FRM method, server side
              */
             EapSm( EapPacket::EAP_TYPE method, string aaa_server_addr, uint16_t aaa_server_port, string aaa_server_secret );
-        
+
         public:
 
 
             virtual void AAA_receive( auto_ptr<EapPacket> eap_packet );
 
-            
+
             /**
              * Obtains an EapSm for FRM method
              * @param frm_server_data Data for the FRM method, server side
              * @return A new EapSm to be used with the FRM method
              */
             static auto_ptr<EapSm> getEapSmFrm( string aaa_server_addr, uint16_t aaa_server_port, string aaa_server_secret );
-                        
+
             /**
-             * Performs the first step of the state machine obtaining the EAP Request 
+             * Performs the first step of the state machine obtaining the EAP Request
              * @return EAP request
              */
             virtual auto_ptr< EapPacket > firststep( );
 
 
             /**
-             * Steps the state machine with an EAP request 
+             * Steps the state machine with an EAP request
              * @param eap_request EAP request
              * @return EAP response
              */
             virtual auto_ptr<EapPacket> step( const EapPacket& eap_request );
-            
+
             /**
              * Obtains the MSK value
              * @return MSK value
              */
             virtual auto_ptr<ByteArray> getMsk() const;
-            
+
             virtual ~EapSm();
     };
 }

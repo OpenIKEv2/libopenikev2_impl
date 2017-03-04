@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -26,11 +26,11 @@
 namespace openikev2 {
 
     /**
-        This class represents an AUTH_LIFETIME notify controller    
-        @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj.fernandez@dif.um.es, alejandro_perez@dif.um.es>
+        This class represents an AUTH_LIFETIME notify controller
+        @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj@um.es, alex@um.es>
     */
     class NotifyController_AUTH_LIFETIME : public NotifyController {
-            
+
             /****************************** METHODS ******************************/
         public:
             /**

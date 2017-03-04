@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -95,13 +95,13 @@ namespace openikev2 {
 		if (f==NULL)
 		{
 		 Log::writeLockedMessage( "NetworkController", "File with current CoA does not exist.", Log::LOG_ERRO, true );
-	     } 
+	     }
 
 	     if ((fscanf(f,"%s", coa)) != 0  )  {
 		IpAddress *chosen_coa = new IpAddressOpenIKE ( coa );
 		fclose(f);
 		return chosen_coa;
-	    } 
+	    }
 	    else {
 		Log::writeLockedMessage( "NetworkController", "No CoA in file." , Log::LOG_ERRO, true );
 		fclose(f);
@@ -123,7 +123,7 @@ namespace openikev2 {
 		if (f==NULL)
 		{
 		 	Log::writeLockedMessage( "NetworkController", "File with binding cache info does not exist.", Log::LOG_ERRO, true );
-	        } 
+	        }
 
 		while ((fscanf(f,"%s %s", coa, hoa)) != 0  )  {
 			string str_coa (coa);
@@ -137,7 +137,7 @@ namespace openikev2 {
 				fclose(f);
 				return found_hoa;
 			}
-		}	     	
+		}
 		Log::writeLockedMessage( "NetworkController", "No CoA in file." , Log::LOG_ERRO, true );
 		fclose(f);
 		return NULL;
@@ -241,11 +241,11 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::getIpAddress( Enums::ADDR_FAMI
 }
 
 auto_ptr<SocketAddress> NetworkControllerImplOpenIKE::getSocketAddress( string address , int port) {
-	auto_ptr<IpAddress> addr ( new IpAddressOpenIKE( address ) );       
+	auto_ptr<IpAddress> addr ( new IpAddressOpenIKE( address ) );
 	return auto_ptr<SocketAddress> ( new SocketAddressPosix( addr, port) );
 }
 
-auto_ptr<SocketAddress> NetworkControllerImplOpenIKE::getSocketAddress( auto_ptr<IpAddress> address , int port) {      
+auto_ptr<SocketAddress> NetworkControllerImplOpenIKE::getSocketAddress( auto_ptr<IpAddress> address , int port) {
 	return auto_ptr<SocketAddress> ( new SocketAddressPosix( address, port) );
 }
 
@@ -426,7 +426,7 @@ void NetworkControllerImplOpenIKE::deleteAddress( const IpAddress& addr, uint8_t
 
 NetworkControllerImplOpenIKE::~NetworkControllerImplOpenIKE() {
 #ifdef EAP_SERVER_ENABLED
-    if ( radvd != NULL ) 
+    if ( radvd != NULL )
         delete radvd;
 #endif
 }
@@ -449,7 +449,7 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::generateIpv4AddressDhcp( IkeSa
     }
     auto_ptr<ByteArray> mask ( mask_temp );
 
-	//cout << "MASCARA:" << mask->toString() << endl; 
+	//cout << "MASCARA:" << mask->toString() << endl;
 
     *netmask = mask->clone();
 
@@ -476,8 +476,8 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::generateIpv4AddressFixed( IkeS
     auto_ptr<ByteArray> mask = fixed_prefix->getMask();
 
 
-	//cout << "MASCARA:" << mask->toString() << endl; 
-//pedro 
+	//cout << "MASCARA:" << mask->toString() << endl;
+//pedro
     *netmask = mask->clone();
 
         // Generates a random address with the correct prefix
@@ -502,7 +502,7 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::generateIpv4AddressFixed( IkeS
         if ( *address == fixed_prefix->getNetworkAddress() ) {
            ( *alternative_address_data )[ 3 ] = last_byte + 1 ;
            auto_ptr<IpAddress> address2( new IpAddressOpenIKE( Enums::ADDR_IPV4, alternative_address_data ) );
-           return address2;    
+           return address2;
        }
        else if ( *address == *fixed_prefix->getBroadCastAddress() ) {
            ( *alternative_address_data )[ 3 ] = last_byte - 1 ;
@@ -536,8 +536,8 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::generateIpv6AddressFixed( IkeS
         // Generates the mask based on the prefixlen
     auto_ptr<ByteArray> mask = fixed_prefix->getMask();
 
-	//cout << "MASCARA:" << mask->toString() << endl; 
-//pedro 
+	//cout << "MASCARA:" << mask->toString() << endl;
+//pedro
     *netmask = mask->clone();
 
         // Generates a random address with the correct prefix
@@ -606,8 +606,8 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::generateIpv6AddressAutoconf( I
         // Generates the mask based on the prefixlen
     auto_ptr<ByteArray> mask = autoconf_prefix->getMask();
 
-	//cout << "MASCARA:" << mask->toString() << endl; 
-//pedro 
+	//cout << "MASCARA:" << mask->toString() << endl;
+//pedro
     *netmask = mask->clone();
 
     auto_ptr<ByteArray> generated_peer_addr = ike_sa.peer_addr->getIpAddress().getBytes();
@@ -750,10 +750,10 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
 
         Log::writeLockedMessage( ike_sa.getLogId(), "Setting address configuration: Rol=[IRAC] Address=[" + assigned_ipv6_address->toString() + "]", Log::LOG_INFO, true );
 
-        auto_ptr<SocketAddressPosix> my_addr_posix ( new SocketAddressPosix (*(ike_sa.my_addr)) ); 
+        auto_ptr<SocketAddressPosix> my_addr_posix ( new SocketAddressPosix (*(ike_sa.my_addr)) );
         IpAddress& src_ip = (IpAddress &) my_addr_posix->getIpAddress();
 
-        auto_ptr<SocketAddressPosix> peer_addr_posix ( new SocketAddressPosix (*(ike_sa.peer_addr)) ); 
+        auto_ptr<SocketAddressPosix> peer_addr_posix ( new SocketAddressPosix (*(ike_sa.peer_addr)) );
         IpAddress& dst_ip = (IpAddress &) peer_addr_posix->getIpAddress();
 
             // create iface with assigned address
@@ -804,25 +804,25 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
 
         Log::writeLockedMessage( ike_sa.getLogId(), "IPv6 received, but not set. Autoconf will do. Rol=[IRAC] Address=[" + assigned_ipv6_address->toString() + "]", Log::LOG_INFO, true );
 /*
-            auto_ptr<SocketAddressPosix> my_addr_posix ( new SocketAddressPosix (*(ike_sa.my_addr)) ); 
+            auto_ptr<SocketAddressPosix> my_addr_posix ( new SocketAddressPosix (*(ike_sa.my_addr)) );
             IpAddress& src_ip = (IpAddress &) my_addr_posix->getIpAddress();
 
-            auto_ptr<SocketAddressPosix> peer_addr_posix ( new SocketAddressPosix (*(ike_sa.peer_addr)) ); 
+            auto_ptr<SocketAddressPosix> peer_addr_posix ( new SocketAddressPosix (*(ike_sa.peer_addr)) );
             IpAddress& dst_ip = (IpAddress &) peer_addr_posix->getIpAddress();
 
             // create iface with assigned address
             //string ifname;
             //int32_t tunfd = this->tunOpen( ifname );
-            
+
             string ifname = src_ip.getIfaceName();
-	    // Don't needed with autoconf. 
+	    // Don't needed with autoconf.
             this->createAddress( *assigned_ipv6_address, ipv6_mask, ifname );
             auto_ptr<AddressConfiguration> address_configuration( new AddressConfiguration( AddressConfiguration::CONFIGURATION_IRAC , *this ) );
             //address_configuration->tun_fd = tunfd;
             address_configuration->ifname = ifname;
             address_configuration->assigned_address = assigned_ipv6_address->clone();
             address_configuration->assigned_prefixlen = ipv6_mask;
-            
+
             // Create routes if INTERNAL_IP6_SUBNET is included
             ConfigurationAttribute* subnet = payload_conf.getFirstConfigurationAttributeByType( ConfigurationAttribute::INTERNAL_IP6_SUBNET );
             if ( subnet != NULL ) {
@@ -830,7 +830,7 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
                 auto_ptr<IpAddress> route_dst = this->getIpAddress( Enums::ADDR_IPV6, buffer.readByteArray( 16 ) );
                 uint8_t route_mask = buffer.readInt8();
                 //this->createRoute(*IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV6), *route_dst, route_mask,  *IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV6), 0, ifname );
-		
+
 
 		//this->deleteRoute( *IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV6), 0, dst_ip, 0, ifname);
 
@@ -873,25 +873,25 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
             //    Log::writeLockedMessage( ike_sa.getLogId(), "No IPv4 default gateway address found in configuration response", Log::LOG_ERRO, true );
             //    return IkeSa::NEGOTIATION_ACTION_ERROR;
             //}
-            //  
+            //
             //auto_ptr<IpAddress> assigned_ipv4_default_gw ( this->getIpAddress( Enums::ADDR_IPV4, response3->value->clone() ) );
 
 
             Log::writeLockedMessage( ike_sa.getLogId(), "Setting address configuration: Rol=[IRAC] Address=[" + assigned_ipv4_address->toString() + "/"+ assigned_ipv4_netmask->toString() + "]", Log::LOG_INFO, true );
 
             // create iface with assigned address
-            auto_ptr<SocketAddressPosix> my_addr_posix ( new SocketAddressPosix (*(ike_sa.my_addr)) ); 
+            auto_ptr<SocketAddressPosix> my_addr_posix ( new SocketAddressPosix (*(ike_sa.my_addr)) );
             IpAddress& src_ip = (IpAddress &) my_addr_posix->getIpAddress();
             string ifname = "";
-            
+
             ifname = src_ip.getIfaceName();
 
-            auto_ptr<SocketAddressPosix> peer_addr_posix ( new SocketAddressPosix (*(ike_sa.peer_addr)) ); 
+            auto_ptr<SocketAddressPosix> peer_addr_posix ( new SocketAddressPosix (*(ike_sa.peer_addr)) );
             IpAddress& dst_ip = (IpAddress &) peer_addr_posix->getIpAddress();
-            
-            
+
+
             //int32_t tunfd = this->tunOpen( ifname );  // Pedro
-            
+
             this->createAddress( *assigned_ipv4_address, ipv4_mask, ifname );
             auto_ptr<AddressConfiguration> address_configuration( new AddressConfiguration( AddressConfiguration::CONFIGURATION_IRAC, *this ) );
             //address_configuration->tun_fd = tunfd;
@@ -899,20 +899,20 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
             address_configuration->assigned_address = assigned_ipv4_address->clone();
             address_configuration->assigned_prefixlen = ipv4_mask;
             //address_configuration->assigned_default_gw = assigned_ipv4_default_gw->clone();
-            
-            
+
+
             // Create routes if INTERNAL_IP4_SUBNET is included
             ConfigurationAttribute* subnet = payload_conf.getFirstConfigurationAttributeByType( ConfigurationAttribute::INTERNAL_IP4_SUBNET );
             if ( subnet != NULL ) {
                 ByteBuffer buffer( *subnet->value );
                 auto_ptr<IpAddress> route_dst = this->getIpAddress( Enums::ADDR_IPV4, buffer.readByteArray( 4 ) );
                 uint16_t route_mask = NetworkPrefix::getPrefixLen( *buffer.readByteArray( 4 ) );
-                
+
                 address_configuration->route_dst = route_dst->clone();
                 address_configuration->route_prefixlen = route_mask;
                 address_configuration->default_gw = auto_ptr<IpAddress> ( new IpAddressOpenIKE (dst_ip.toString()) );
-                
-                
+
+
                 this->deleteRoute( *IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV4), 0, dst_ip, 0, ifname);
                 this->createRoute( *IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV4), *IpAddressOpenIKE::getAnyAddr(Enums::ADDR_IPV4), 0, dst_ip, 1, ifname);
                 this->createRoute( *assigned_ipv4_address, *route_dst, route_mask, *assigned_ipv4_address , 0, ifname );
@@ -950,7 +950,7 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
         if ( ipv6_request != NULL ) {
             auto_ptr<ByteArray> assigned_ipv6_netmask = auto_ptr<ByteArray> (NULL);
             auto_ptr<IpAddress> assigned_ipv6_address ( this->generateIpv6Address( ike_sa, *ipv6_request,&assigned_ipv6_netmask ) );
-            
+
             if ( assigned_ipv6_address.get() == NULL )
                 return IkeSa::NEGOTIATION_ACTION_ERROR;
 
@@ -1143,16 +1143,16 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
 		            auto_ptr<IpAddress> addr (new IpAddressOpenIKE( "0::0" ));
 		            hoa.reset ( new SocketAddressPosix(addr,500) );
 
-	                    if ( ! is_ha ){			
-	                        coa = received_message->dst_addr->clone();		
-	                    }		
-	                    else {			
-	                        coa = received_message->src_addr->clone();	
+	                    if ( ! is_ha ){
+	                        coa = received_message->dst_addr->clone();
 	                    }
-		          	
+	                    else {
+	                        coa = received_message->src_addr->clone();
+	                    }
+
 		        }
 
-			
+
 			// if the threadcontroller is exiting, then omit new IKE_SA creation
 			if ( exiting ) {
 				Log::writeLockedMessage( "NetworkController", "Cannot create any IKE_SA because we are exiting.", Log::LOG_ERRO, true );
@@ -1182,10 +1182,10 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
 
 			// adds this controller to the collection
 			IkeSaController::addIkeSa( ike_sa );
-		        
+
 
 		}
-		else if ( received_message->exchange_type == Message::IKE_SA_INIT && received_message->message_type == Message::RESPONSE ){		
+		else if ( received_message->exchange_type == Message::IKE_SA_INIT && received_message->message_type == Message::RESPONSE ){
 		        Log::writeLockedMessage( "NetworkController", "Mobility: receiving IKE_SA_INIT response...", Log::LOG_WARN, true );
 
 
@@ -1200,7 +1200,7 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
                 	our_spi = received_message->is_initiator ? received_message->spi_r : received_message->spi_i;
 
 
-		}	
+		}
 		else if ( received_message->exchange_type == Message::IKE_AUTH && received_message->message_type == Message::RESPONSE ){
 		        Log::writeLockedMessage( "NetworkController", "Mobility: receiving IKE_AUTH response...", Log::LOG_WARN, true );
 
@@ -1209,22 +1209,22 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
                     Log::writeLockedMessage( "NetworkController", "Debug -FERNANDO 0", Log::LOG_WARN, true );
                 	our_spi = received_message->is_initiator ? received_message->spi_r : received_message->spi_i;
                     Log::writeLockedMessage( "NetworkController", "Debug -FERNANDO 1", Log::LOG_WARN, true );
-			
+
            if (mobility){
- 
+
                         IkeSa* ike_sa = IkeSaController::getIkeSaByIkeSaSpi( our_spi );
 			            ike_sa->my_addr = ike_sa->home_address->clone();
 
                         Log::writeLockedMessage( "NetworkController", "Mobility: Changing CoA to HoA in received message.", Log::LOG_WARN, true );
-                        if ( ! is_ha ){			
+                        if ( ! is_ha ){
                             coa = received_message->dst_addr->clone();
-                            received_message->dst_addr = ike_sa->home_address->clone();		
-                        }		
-                        else {			
-                            coa = received_message->src_addr->clone();
-                            received_message->src_addr = ike_sa->home_address->clone();		
+                            received_message->dst_addr = ike_sa->home_address->clone();
                         }
-		     }           
+                        else {
+                            coa = received_message->src_addr->clone();
+                            received_message->src_addr = ike_sa->home_address->clone();
+                        }
+		     }
 
 		}
 		else {
@@ -1243,25 +1243,25 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
 
 		                if ((received_message->exchange_type == Message::IKE_SA_INIT) || (received_message->exchange_type == Message::IKE_AUTH) ){
 		                    Log::writeLockedMessage( "NetworkController", "Mobility: Changing CoA to HoA in received message.", Log::LOG_WARN, true );
-		                    if ( ! is_ha ){			
+		                    if ( ! is_ha ){
 		                    	Log::writeLockedMessage( "NetworkController", "Debug 1", Log::LOG_WARN, true );
 
 		                        coa = received_message->dst_addr->clone();
 
 		                    	Log::writeLockedMessage( "NetworkController", "Debug 2", Log::LOG_WARN, true );
 
-		                        received_message->dst_addr = ike_sa->home_address->clone();;		
+		                        received_message->dst_addr = ike_sa->home_address->clone();;
 
 		                    	Log::writeLockedMessage( "NetworkController", "Debug 3", Log::LOG_WARN, true );
 
-		                    }		
-		                    else {			
+		                    }
+		                    else {
 
 		                    	Log::writeLockedMessage( "NetworkController", "Debug 4", Log::LOG_WARN, true );
 		                        coa = received_message->src_addr->clone();
 
 		                    	Log::writeLockedMessage( "NetworkController", "Debug 5", Log::LOG_WARN, true );
-		                        received_message->src_addr = ike_sa->home_address->clone();;		
+		                        received_message->src_addr = ike_sa->home_address->clone();;
 
 		                    	Log::writeLockedMessage( "NetworkController", "Debug 6", Log::LOG_WARN, true );
 		                    }
@@ -1269,7 +1269,7 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
 		                else {
 		                   Log::writeLockedMessage( "NetworkController", "Mobility: NOT CHANGING CoA for HoA.", Log::LOG_WARN, true );
 		                }
-		            /*}*/    	
+		            /*}*/
 		        }
 		                    	Log::writeLockedMessage( "NetworkController", "Debug 7", Log::LOG_WARN, true );
 
@@ -1279,7 +1279,7 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
 
 		}
 
-               
+
                 Log::writeLockedMessage( "NetworkController", "Debug -FERNANDO 2", Log::LOG_WARN, true );
                 // creates a new MessageCommand and push it to the properly IkeSa
                 auto_ptr<IpAddress> src_addr = received_message->getSrcAddress().getIpAddress().clone();
@@ -1337,7 +1337,7 @@ IkeSa::NEGOTIATION_ACTION NetworkControllerImplOpenIKE::processConfigurationResp
 
 int16_t NetworkControllerImplOpenIKE::getPrefixLen(auto_ptr<ByteArray> prefix) {
     int prefix_len = 0;
-    for (int i = 0; i < 4; i++){ 
+    for (int i = 0; i < 4; i++){
         if ( (*prefix)[i] == 0xFF ){
         	prefix_len += 8;
         }
@@ -1349,10 +1349,10 @@ int16_t NetworkControllerImplOpenIKE::getPrefixLen(auto_ptr<ByteArray> prefix) {
                case 0xF0: prefix_len += 4; break;
                case 0xE0: prefix_len += 3; break;
                case 0xC0: prefix_len += 2; break;
-               case 0x80: prefix_len += 1; break;                   
+               case 0x80: prefix_len += 1; break;
            }
        }
-   } 
+   }
    return prefix_len;
 }
 
@@ -1360,7 +1360,7 @@ int16_t NetworkControllerImplOpenIKE::getPrefixLen(auto_ptr<ByteArray> prefix) {
 void NetworkControllerImplOpenIKE::startRadvd() {
 #ifdef EAP_SERVER_ENABLED
         // start radvd stuff if enabled
-	
+
 	auto_ptr<GeneralConfiguration> general_conf = Configuration::getInstance().getGeneralConfiguration();
 
 	bool radvd_enabled = false;
@@ -1373,8 +1373,8 @@ void NetworkControllerImplOpenIKE::startRadvd() {
     if ( radvd_config_file_attr != NULL )
         radvd_config_file = radvd_config_file_attr->value;
 
-	//cout << "radvd_enabled=" << radvd_enabled << endl;        
-	//cout << "radvd_config_file=" << radvd_config_file << endl;	
+	//cout << "radvd_enabled=" << radvd_enabled << endl;
+	//cout << "radvd_config_file=" << radvd_config_file << endl;
 
     if (radvd_enabled) {
             // Setup the radvd infrastructure

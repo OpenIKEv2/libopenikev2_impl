@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -27,7 +27,7 @@ namespace openikev2 {
 
     /**
      Implementation of AuthGenerator using the standard PSK authentication method
-     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class AuthGeneratorPsk : public AuthGenerator {
             /****************************** ATTRIBUTES ******************************/
@@ -41,7 +41,7 @@ namespace openikev2 {
              * @param psk Binary Pre-shared key
              */
             AuthGeneratorPsk( auto_ptr<ByteArray> psk );
-            
+
             /**
              * Creates a new AuthGeneratorPsk with the indicated pre-shared key
              * @param psk Textual pre-shared key

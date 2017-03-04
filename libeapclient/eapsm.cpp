@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -69,7 +69,7 @@ struct eapol_callbacks EapSm::eapol_cb =
         allowed_methods[0].vendor = EAP_VENDOR_IETF;
         allowed_methods[0].method = method;
 	allowed_methods[1].vendor = EAP_VENDOR_IETF;
-        allowed_methods[1].method = EapPacket::EAP_TYPE_IDENTITY;        
+        allowed_methods[1].method = EapPacket::EAP_TYPE_IDENTITY;
 	allowed_methods[2].vendor = EAP_VENDOR_IETF;
         allowed_methods[2].method = EapPacket::EAP_TYPE_NONE;
 
@@ -127,7 +127,7 @@ struct eapol_callbacks EapSm::eapol_cb =
 
         // copy the request into the buffer, mark as request and steps the machine
         this->request = TRUE;
-	
+
         wpabuf_free(this->buffer);
 
 	this->buffer = wpabuf_alloc_copy(buffer.getRawPointer(), buffer.size());
@@ -151,10 +151,10 @@ struct eapol_callbacks EapSm::eapol_cb =
         struct wpabuf* response_buffer = eap_get_eapRespData(this->sm);
 
 	ByteBuffer tempBuffer( response_buffer->size );
- 
-	
+
+
 	//Los datos pueden ir detras de la estructura WPABUF
-        tempBuffer.writeBuffer( wpabuf_head(response_buffer), 	response_buffer->used );		
+        tempBuffer.writeBuffer( wpabuf_head(response_buffer), 	response_buffer->used );
 
 
 	wpabuf_free(response_buffer);

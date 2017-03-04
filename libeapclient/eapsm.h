@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -36,12 +36,12 @@ extern "C" {
 namespace openikev2 {
     /**
      This class represents an EAP state machine from WPA supplicant code
-     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
-    */    
+     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
+    */
     class EapSm {
             /****************************** ATTRIBUTES ******************************/
         protected:
- 
+
 
             struct eap_sm *sm;                          /**< WPA supplicant EAP state machine */
             struct wpabuf* buffer;                      /**< Buffer to exchange information */
@@ -84,7 +84,7 @@ namespace openikev2 {
              * @param frm_server_data Data for the FRM method, server side
              */
             EapSm( EapPacket::EAP_TYPE method, string password, string ca_certificate, string client_certificate, string client_key_file, string client_key_file_passwd, string frm_client_data, string frm_server_data );
-        
+
         public:
 
             /**
@@ -93,7 +93,7 @@ namespace openikev2 {
              * @return A new EapSm to be used with the MD5 method
              */
             static auto_ptr<EapSm> getEapSmMd5(string password);
-            
+
             /**
              * Obtains an EapSm for TLS method
              * @param ca_certificate Path to the CA certificate
@@ -111,20 +111,20 @@ namespace openikev2 {
              * @return A new EapSm to be used with the FRM method
              */
             static auto_ptr<EapSm> getEapSmFrm(string frm_client_data, string frm_server_data);
-                        
+
             /**
-             * Steps the state machine with an EAP request 
+             * Steps the state machine with an EAP request
              * @param eap_request EAP request
              * @return EAP response
              */
             virtual auto_ptr<EapPacket> step( const EapPacket& eap_request );
-            
+
             /**
              * Obtains the MSK value
              * @return MSK value
              */
             virtual auto_ptr<ByteArray> getMsk() const;
-            
+
             virtual ~EapSm();
     };
 }

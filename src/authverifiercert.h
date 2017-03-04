@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -29,7 +29,7 @@ namespace openikev2 {
 
     /**
      Implementation of AuthVerifier using the standard certificate authentication method
-     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class AuthVerifierCert : public AuthVerifier{
             /****************************** ATTRIBUTES ******************************/
@@ -37,8 +37,8 @@ namespace openikev2 {
             AutoVector<CertificateX509> ca_certificates;                    /**< Collection of CA certificates */
             AutoVector<CertificateX509> white_list_certificates;            /**< Collection of trusted certificates */
             AutoVector<CertificateX509> black_list_certificates;            /**> Collection of black listed certificates */
-        
-        public:    
+
+        public:
             bool send_cert_req;                                             /**< Indicates if we want to send CERT_REQ payloads */
             bool hash_url_support;                                          /**< Indicates if we supports HASH & URL */
 
@@ -51,7 +51,7 @@ namespace openikev2 {
             * @return TRUE if the received certificate is valid. FALSE otherwise
             */
             bool verifyCertificate( const ID & peer_id, const Payload_CERT & payload_cert ) const;
-            
+
             /**
              * Generates a CertificateX509 from a Payload_CERT
              * @param peer_certificate Received Payload_CERT
@@ -71,14 +71,14 @@ namespace openikev2 {
              * @return TRUE if is whitelisted. FALSE otherwise
              */
             virtual bool isWhiteListed( const CertificateX509& certificate ) const;
-                        
+
             /**
             * Obtains a peer certificate when no CERT payload is received. It looks for it in the white list.
             * @param peer_id Peer ID
             * @return The found peer certificate. NULL if no certificate is found.
             */
-            virtual auto_ptr<CertificateX509> getPeerCertificate( const ID& peer_id )const ;                        
-            
+            virtual auto_ptr<CertificateX509> getPeerCertificate( const ID& peer_id )const ;
+
         public:
             /**
              * Creates a new AuthVerifierCert

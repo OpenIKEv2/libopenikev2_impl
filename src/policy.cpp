@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -61,7 +61,7 @@ namespace openikev2 {
 
     bool Policy::equals( const Policy & other ) const {
         if ( this->type != other.type )
-            return false; 
+            return false;
        if ( this->direction != other.direction )
             return false;
         if ( this->ip_protocol != other.ip_protocol )

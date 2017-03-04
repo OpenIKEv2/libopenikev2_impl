@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -136,12 +136,12 @@ namespace openikev2 {
 
     /**
         This class implements a DHCP client to be used with the address configuration mechanims.
-        @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj.fernandez@dif.um.es, alejandro_perez@dif.um.es>
+        @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj@um.es, alex@um.es>
     */
     class DhcpClient: public Attribute, public BusObserver, public Alarmable {
 
         // TODO: Escribir el cliente nosotros mismos. Ahora mismo está casi bien, usando auto punteros, pero el código es lioso
-                
+
             /****************************** STRUCTS ******************************/
         protected:
             /** DHCP message */
@@ -187,7 +187,7 @@ namespace openikev2 {
             /****************************** METHODS ******************************/
         protected:
             /**
-             * Creates a new RAW socket on the interface 
+             * Creates a new RAW socket on the interface
              * @return The socket file descriptor
              */
             virtual int32_t createRawSocket( );
@@ -240,7 +240,7 @@ namespace openikev2 {
 
             /**
              * Adds requests
-             * @param packet DHCP packet 
+             * @param packet DHCP packet
              */
             virtual void addRequests( DhcpMessage *packet );
 
@@ -265,7 +265,7 @@ namespace openikev2 {
 
             /**
              * Reads the MAC address of the interface
-             * @param interface Interface name 
+             * @param interface Interface name
              * @param macaddr Buffer where store the MAC address
              * @return -1 on fail. >0 otherwise
              */
@@ -289,15 +289,15 @@ namespace openikev2 {
 
             /**
              * Sends DHCP request
-             * @param xid Message identificator 
+             * @param xid Message identificator
              * @param server Server address
              * @param requested Requested address
-             * @return 
+             * @return
              */
             virtual int32_t sendSelecting( uint64_t xid, uint8_t *server, uint8_t* requested );
 
             virtual bool performDiscover();
-            
+
             virtual auto_ptr<IpAddress> performRequest(uint32_t& subnet);
 
         public:
@@ -317,11 +317,11 @@ namespace openikev2 {
 
 
             virtual void notifyAlarm( Alarm & alarm );
-            
+
             virtual void notifyBusEvent( const BusEvent& event );
-            
+
             virtual auto_ptr<Attribute> cloneAttribute() const;
-            
+
             virtual string toStringTab( uint8_t tabs ) const ;
 
             virtual ~DhcpClient();

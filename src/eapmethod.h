@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -27,7 +27,7 @@ namespace openikev2 {
 
     /**
      Abstract class that represents any EapMethod (EapClient or EapServer) and contains the common parts to both
-     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class EapMethod : public Printable{
             /****************************** ATTRIBUTES ******************************/
@@ -41,15 +41,15 @@ namespace openikev2 {
              * @param shared_key Shared key
              */
             virtual void setSharedKey( auto_ptr<ByteArray> shared_key );
-            
+
             /**
              * Gets the shared key value
              * @return Reference to the shared_key
              */
             virtual ByteArray* getSharedKey() const;
-            
+
             virtual string toStringTab( uint8_t tabs ) const = 0;
-            
+
             virtual ~EapMethod();
 
     };

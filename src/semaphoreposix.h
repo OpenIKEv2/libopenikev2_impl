@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -32,14 +32,14 @@ namespace openikev2 {
 
     /**
         This class implementes the Semaphore interface using libpthread
-        @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+        @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class SemaphorePosix : public Semaphore {
-            
+
             /****************************** ATTRIBUTES ******************************/
         protected:
             sem_t semaphore;        /**< Internal POSIX semaphore */
-        
+
             /****************************** METHODS ******************************/
         public:
             /**
@@ -49,7 +49,7 @@ namespace openikev2 {
             SemaphorePosix( uint32_t initial_value );
 
             virtual void wait();
-            
+
             virtual void post();
 
             virtual ~SemaphorePosix();

@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -115,7 +115,7 @@ namespace openikev2 {
         bool exist_ike_sa = this->pushCommandByAddress( ike_sa_src_addr, ike_sa_dst_addr, command, false );
 
 	IkeSa* current_ike_sa = this->getIkeSaByAddress(ike_sa_src_addr, ike_sa_dst_addr);
-        
+
 	auto_ptr<GeneralConfiguration> general_conf = Configuration::getInstance().getGeneralConfiguration();
 
         // IF there is no IKE_SA between peers, then create a new one
@@ -131,7 +131,7 @@ namespace openikev2 {
 	    this->incHalfOpenCounter();
 
 	    command.reset ( new SendIkeSaInitReqCommand( child_sa_request ) );
-	    
+
 	    ike_sa->pushCommand( command, false );
 
 	    this->addIkeSa ( ike_sa );
@@ -148,14 +148,14 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 		auto_ptr<Command> command ( new SendNewChildSaReqCommand( child_sa_request->clone() ) );
 		bool exist_ike_sa = false;
 		IkeSa* current_ike_sa = this->getIkeSaByAddress( ike_sa_src_addr, ike_sa_coa_addr);
-		if ((current_ike_sa != NULL) && (current_ike_sa->getState()==10)) {	
+		if ((current_ike_sa != NULL) && (current_ike_sa->getState()==10)) {
 			exist_ike_sa = this->pushCommandByAddress( ike_sa_src_addr, ike_sa_coa_addr, command, false );
 		}
 		else{
 			if(current_ike_sa != NULL) {
 					// Not in a IKE_SA_ESTABLISHED status, so drop the request.
-					// The IKE_SA can't attend it now.				            
-					Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy (1).", Log::LOG_WARN, true );              
+					// The IKE_SA can't attend it now.
+					Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy (1).", Log::LOG_WARN, true );
 				        return;
 			}
 		}
@@ -166,11 +166,11 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 			current_ike_sa = this->getIkeSaByAddress(ike_sa_src_addr, ike_sa_dst_addr);
  			if ((current_ike_sa != NULL) && (current_ike_sa->getState()==10)) /* IKE_SA_ESTABLISHED */
 				exist_ike_sa = this->pushCommandByAddress( ike_sa_src_addr , ike_sa_dst_addr, command2, false );
-			else {            
+			else {
 				if(current_ike_sa != NULL) {
 					// Not in a IKE_SA_ESTABLISHED status, so drop the request.
-					// The IKE_SA can't attend it now.				            
-					Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy (2).", Log::LOG_WARN, true );              
+					// The IKE_SA can't attend it now.
+					Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy (2).", Log::LOG_WARN, true );
 				        return;
 				 }
 				 else {	//TODO: Ask Mip6d for the HoA associated with the current CoA
@@ -178,19 +178,19 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 
 				    	auto_ptr<IpAddress> hoa ( NetworkController::getHoAbyCoA(ike_sa_coa_addr) );
 					if (hoa.get() == NULL){
-						Log::writeLockedMessage( "NetworkController", "Droped command because no CoA matched in binding cache file.", Log::LOG_ERRO, true ); 
-						return;					
+						Log::writeLockedMessage( "NetworkController", "Droped command because no CoA matched in binding cache file.", Log::LOG_ERRO, true );
+						return;
 					}
-				    	current_ike_sa = this->getIkeSaByAddress(ike_sa_src_addr, *hoa);					    
+				    	current_ike_sa = this->getIkeSaByAddress(ike_sa_src_addr, *hoa);
 					if ((current_ike_sa != NULL) && (current_ike_sa->getState()==10)) /* IKE_SA_ESTABLISHED */
-					{						
+					{
 						exist_ike_sa = this->pushCommandByAddress( ike_sa_src_addr, *hoa, command2, false );
 					}
 					else {
 						if(current_ike_sa != NULL) {
 							// Not in a IKE_SA_ESTABLISHED status, so drop the request.
-							// The IKE_SA can't attend it now.				            
-							Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy.", Log::LOG_WARN, true );              
+							// The IKE_SA can't attend it now.
+							Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy.", Log::LOG_WARN, true );
 							return;
 						}
 					}
@@ -199,7 +199,7 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 		}
 
 		if (!exist_ike_sa) {
-		   
+
 		    Log::writeLockedMessage( "IkeSaController", "IkeSa between IP=[" + ike_sa_src_addr.toString() + "] and IP=[" + ike_sa_dst_addr.toString() + "] does not exist. Creating a new one", Log::LOG_INFO, true );
 
 		    // Create new IkeSa (RESPONDER) based on CoA, but it must be changed to HoA after IKE_AUTH exchange
@@ -211,7 +211,7 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 		    this->incHalfOpenCounter();
 
 		    command.reset ( new SendIkeSaInitReqCommand( child_sa_request ) );
-		    
+
 		    ike_sa->pushCommand( command, false );
 
 		    this->addIkeSa ( ike_sa );
@@ -220,19 +220,19 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 			if (child_sa_request->mode == Enums::TUNNEL_MODE){
 				Log::writeLockedMessage( "NetworkController", "Soy HA y cambio mi CoA a IP=[" + ike_sa_coa_addr.toString() + "]", Log::LOG_WARN, true );
 				auto_ptr<IpAddress> coa (ike_sa_coa_addr.clone());
-				current_ike_sa->care_of_address.reset(new SocketAddressPosix(coa,500));	
-			}  
-		
+				current_ike_sa->care_of_address.reset(new SocketAddressPosix(coa,500));
+			}
+
 		}
 
 
 
 	}
 	else{ // it is a MR
-	
+
 		// First, match the IKE_SA using the CoA
 		auto_ptr<Command> command ( new SendNewChildSaReqCommand( child_sa_request->clone() ) );
-		IkeSa* current_ike_sa = this->getIkeSaByAddress(ike_sa_coa_addr, ike_sa_dst_addr);		
+		IkeSa* current_ike_sa = this->getIkeSaByAddress(ike_sa_coa_addr, ike_sa_dst_addr);
 		bool exist_ike_sa = false;
 		if ((current_ike_sa != NULL) && (current_ike_sa->getState()==10)){
 			exist_ike_sa = this->pushCommandByAddress( ike_sa_coa_addr, ike_sa_dst_addr, command, false );
@@ -241,8 +241,8 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 
 			if(current_ike_sa != NULL) {
 				// Not in a IKE_SA_ESTABLISHED status, so drop the request.
-				// The IKE_SA can't attend it now.				            
-				Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy (1).", Log::LOG_WARN, true );              
+				// The IKE_SA can't attend it now.
+				Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy (1).", Log::LOG_WARN, true );
 			        return;
 			 }
 
@@ -252,17 +252,17 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 			Log::writeLockedMessage( "IkeSaController", "IkeSa between IP=[" + ike_sa_coa_addr.toString() + "] and IP=[" + ike_sa_dst_addr.toString() + "] does not exist. Try again using HoA...", Log::LOG_INFO, true );
 			// If not found, then use the HoA to match IKE_SA
 			auto_ptr<Command> command2 ( new SendNewChildSaReqCommand( child_sa_request->clone() ) );
-			
+
 			current_ike_sa = this->getIkeSaByAddress(ike_sa_src_addr, ike_sa_dst_addr);
  			if ((current_ike_sa != NULL) && (current_ike_sa->getState()==10)) /* IKE_SA_ESTABLISHED */
 			{
 				exist_ike_sa = this->pushCommandByAddress( ike_sa_src_addr , ike_sa_dst_addr, command2, false );
 			}
-			else {            
+			else {
 				if(current_ike_sa != NULL) {
 					// Not in a IKE_SA_ESTABLISHED status, so drop the request.
-					// The IKE_SA can't attend it now.				            
-					Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy (2).", Log::LOG_WARN, true );              
+					// The IKE_SA can't attend it now.
+					Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy (2).", Log::LOG_WARN, true );
 				        return;
 				 }
 				 else {
@@ -271,16 +271,16 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 					StringAttribute* string_attr = general_conf->attributemap->getAttribute<StringAttribute>( "home_address" );
 					if (string_attr!=NULL ){
 					    	auto_ptr<IpAddress> hoa ( new IpAddressOpenIKE( string_attr->value ));
-					    	current_ike_sa = this->getIkeSaByAddress(*hoa, ike_sa_dst_addr);					    
+					    	current_ike_sa = this->getIkeSaByAddress(*hoa, ike_sa_dst_addr);
 						if ((current_ike_sa != NULL) && (current_ike_sa->getState()==10)) /* IKE_SA_ESTABLISHED */
-						{						
+						{
 							exist_ike_sa = this->pushCommandByAddress( *hoa, ike_sa_dst_addr, command2, false );
 						}
 						else {
 							if(current_ike_sa != NULL) {
 								// Not in a IKE_SA_ESTABLISHED status, so drop the request.
-								// The IKE_SA can't attend it now.				            
-								Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy.", Log::LOG_WARN, true );              
+								// The IKE_SA can't attend it now.
+								Log::writeLockedMessage( "NetworkController", "Droped command because the IKE_SA is busy.", Log::LOG_WARN, true );
 								return;
 							}
 						}
@@ -291,7 +291,7 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 
 
 		if (!exist_ike_sa) {
-		   
+
 		    Log::writeLockedMessage( "IkeSaController", "IkeSa between IP=[" + ike_sa_src_addr.toString() + "] and IP=[" + ike_sa_dst_addr.toString() + "] does not exist. Creating a new one", Log::LOG_INFO, true );
 
 		    // Create new IkeSa (INITIATOR) based on CoA, but it must be changed to HoA after IKE_AUTH exchange
@@ -305,7 +305,7 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 		    this->incHalfOpenCounter();
 
 		    command.reset ( new SendIkeSaInitReqCommand( child_sa_request ) );
-		    
+
 		    ike_sa->pushCommand( command, false );
 
 		    Log::writeLockedMessage( "IkeSaController", "The command was pushed in the new IKE SA and stored in the IKE_SA collection ", Log::LOG_INFO, true );
@@ -316,9 +316,9 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 			if (child_sa_request->mode == Enums::TUNNEL_MODE){
 				Log::writeLockedMessage( "NetworkController", "Soy MR y cambio mi CoA a IP=[" + ike_sa_coa_addr.toString() + "]", Log::LOG_WARN, true );
 				auto_ptr<IpAddress> coa (ike_sa_coa_addr.clone());
-				current_ike_sa->care_of_address.reset(new SocketAddressPosix(coa,500));	
-			}  
-		
+				current_ike_sa->care_of_address.reset(new SocketAddressPosix(coa,500));
+			}
+
 		}
 
 
@@ -355,7 +355,7 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
         if ( it == this->ike_sa_collection.end() )
             return NULL;
 
-        
+
         return it->second;
 
     }
@@ -502,7 +502,7 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 
         if ( delete_ike_sa ) {
             // Deletes this ike_sa from the IkeSa list
-	    
+
             this->deleteIkeSaController( ike_sa );
 
             // We need to unlock the list after removing because deletion of an IKE_SA could lead use to a deadlock situation

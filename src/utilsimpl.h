@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -48,9 +48,9 @@ namespace openikev2 {
             static Enums::ADDR_FAMILY getInternalFamily( uint16_t unix_family );
 
             static string charToString( char *str );
-            
+
             static string getPaddedString( string base, uint16_t totalsize, bool rightalign, char padchar );
-            
+
             static uint16_t getUnixFamily( Enums::ADDR_FAMILY family );
     };
 }

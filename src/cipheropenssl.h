@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -41,7 +41,7 @@ namespace openikev2 {
 
     /**
         This class implements a Cipher, using the OpenSSL library.
-        @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+        @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class CipherOpenSSL : public Cipher {
 
@@ -57,7 +57,7 @@ namespace openikev2 {
             /****************************** METHODS ******************************/
         public:
             /**
-             * Creates a new CipherOpenSSL, setting the indicated parameters.   
+             * Creates a new CipherOpenSSL, setting the indicated parameters.
              * @param proposal Proposal containing the ENCR and INTEG transforms
              * @param encr_key Encryption key
              * @param integ_key Integrity key
@@ -65,11 +65,11 @@ namespace openikev2 {
             CipherOpenSSL( Enums::ENCR_ID encr_algo, Enums::INTEG_ID integ_algo, auto_ptr<ByteArray> encr_key, auto_ptr<ByteArray> integ_key );
 
             virtual auto_ptr<ByteArray> encrypt( ByteArray& plain_text, ByteArray& initialization_vector );
-            
+
             virtual auto_ptr<ByteArray> decrypt( ByteArray& cipher_text, ByteArray& initialization_vector );
-            
+
             virtual auto_ptr<ByteArray> computeIntegrity( ByteArray& data_buffer );
-            
+
             virtual auto_ptr<ByteArray> hmac( ByteArray& data_buffer, ByteArray& hmac_key );
 
             virtual ~CipherOpenSSL();

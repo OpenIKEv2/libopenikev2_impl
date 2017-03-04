@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -26,10 +26,10 @@
 
 namespace openikev2 {
     class IkeSaExecuter;
-        
+
     /**
      This class implements the abstract class IkeSaControllerImpl
-     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class IkeSaControllerImplOpenIKE : public IkeSaControllerImpl {
             friend class IkeSaExecuter;
@@ -80,7 +80,7 @@ namespace openikev2 {
 
             virtual IkeSa *getIkeSaByAddress( const IpAddress& addr, const IpAddress& peer_addr );
 
-        
+
         public:
             IkeSaControllerImplOpenIKE ( uint16_t num_command_executer );
 
@@ -101,9 +101,9 @@ namespace openikev2 {
             virtual bool pushCommandByIkeSaSpi( uint64_t spi, auto_ptr<Command> command, bool priority );
 
             virtual IkeSa* getIkeSaByIkeSaSpi( uint64_t spi);
-            
+
             virtual bool pushCommandByChildSaSpi( uint32_t spi, auto_ptr<Command> command, bool priority );
-            
+
             virtual void exit();
 
             virtual bool isExiting();

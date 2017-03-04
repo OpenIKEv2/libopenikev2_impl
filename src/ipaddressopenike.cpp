@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -34,7 +34,7 @@
 namespace openikev2 {
 
     IpAddressOpenIKE::IpAddressOpenIKE( string address ) {
-        
+
         //printf("Creando IP: %s\n", address.c_str() );
         memset( &this->address, 0, sizeof( sockaddr_storage ) );
 
@@ -243,7 +243,7 @@ namespace openikev2 {
         else
             assert( "unknown address" && 0 );
     }
-    
+
     string IpAddressOpenIKE::getIfaceName() {
 	if ( this->address.ss_family == AF_INET ) {
 
@@ -256,7 +256,7 @@ namespace openikev2 {
             sockaddr_in* addr4 = ( sockaddr_in* ) & this->address;
             inet_ntop(address.ss_family, (void *)&(addr4->sin_addr), wanted, sizeof(wanted));
             //printf("*********** IP=%s \n",wanted);
-            
+
             getifaddrs(&addrs);
             for (iap = addrs; iap != NULL ; iap = iap->ifa_next) {
         	if (iap->ifa_addr && (iap->ifa_flags & IFF_UP) && iap->ifa_addr->sa_family == AF_INET) {
@@ -283,7 +283,7 @@ namespace openikev2 {
             inet_ntop(address.ss_family, (void *)&(addr6->sin6_addr), wanted, sizeof(wanted));
 
             //printf("*********** IP=%s \n",wanted);
-            
+
             getifaddrs(&addrs);
             for (iap = addrs; iap != NULL ; iap = iap->ifa_next) {
         	if (iap->ifa_addr && (iap->ifa_flags & IFF_UP) && iap->ifa_addr->sa_family == AF_INET6) {

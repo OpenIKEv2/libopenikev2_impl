@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -32,8 +32,8 @@
 
 namespace openikev2 {
 
-    DiffieHellmanEllipticCurve::DiffieHellmanEllipticCurve( Enums::DH_ID group_id ) 
-        : DiffieHellman (group_id) { 
+    DiffieHellmanEllipticCurve::DiffieHellmanEllipticCurve( Enums::DH_ID group_id )
+        : DiffieHellman (group_id) {
         uint16_t public_key_bytes_len;
 
         // creates the BN context
@@ -87,7 +87,7 @@ namespace openikev2 {
 
         BN_free(x);
         BN_free(y);
-            
+
         this->public_key = public_key;
     }
 
@@ -115,7 +115,7 @@ namespace openikev2 {
         BN_free(x);
         BN_free(y);
         EC_POINT_free(peer_point);
-        
+
         this->shared_secret.reset ( new ByteArray( abuf, aout ) );
     }
 

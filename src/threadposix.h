@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -35,7 +35,7 @@ namespace openikev2 {
 
     /**
         This class represents a POSIX Thread
-        @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj.fernandez@dif.um.es, alejandro_perez@dif.um.es>
+        @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj@um.es, alex@um.es>
     */
     class ThreadPosix {
             /****************************** ATTRIBUTES ******************************/
@@ -43,10 +43,10 @@ namespace openikev2 {
             static MutexPosix mutex;                /**< Mutex to protect counter acceses */
             static uint32_t thread_counter;         /**< Thread counter */
             pthread_t pthreadid;
-                    
+
         public:
             uint32_t thread_id;
-                                
+
             /****************************** METHODS ******************************/
         protected:
             /**

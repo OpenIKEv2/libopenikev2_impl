@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -35,7 +35,7 @@ namespace openikev2 {
 
     /**
         This class implements the EapServer abstract class, acting as an EAP authentication (pass-through) between the client and a RADIUS server
-        @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+        @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class EapServerRadius : public EapServer {
         protected:
@@ -51,7 +51,7 @@ namespace openikev2 {
             virtual auto_ptr<RadiusMessage> receiveRadiusMessage(const ByteArray& request_message_authenticator );
             virtual void getMsk(RadiusMessage& radius_message, RadiusMessage & access_request_message);
             virtual auto_ptr<ByteArray> decryptKey(const ByteArray& key_attr, const ByteArray & authenticator);
-            
+
             EapServerRadius( const EapServerRadius& other );
 
         public:

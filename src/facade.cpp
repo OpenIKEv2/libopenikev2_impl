@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -102,7 +102,7 @@ namespace openikev2 {
         }
 	IpsecController::createIpsecPolicy( *ts_i, *ts_r, direction, action, priority, ipsec_protocol, mode, src_tun.get(), dst_tun.get(), autogen, sub );
 
-	
+
     }
 
     void Facade::deleteIpsecPolicy( string src_selector, uint16_t src_port, string dst_selector, uint16_t dst_port, uint8_t ip_protocol, Enums::DIRECTION direction ) {
@@ -115,7 +115,7 @@ namespace openikev2 {
         auto_ptr<TrafficSelector> ts_r( new TrafficSelector( dst_sel->getNetworkAddress(), dst_sel->getPrefixLen(), dst_port, ip_protocol ) );
         vector<TrafficSelector*> vts_r;
         vts_r.push_back( ts_r.get() );
-        
+
         IpsecController::deleteIpsecPolicy( vts_i, vts_r, direction  );
     }
 

@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -101,7 +101,7 @@ namespace openikev2 {
 
         ByteBuffer received_md5(16);
         received_md5.writeBuffer(eap_packet.eap_type_data->getRawPointer() + 1, 16);
-        
+
         if ( md5_result == received_md5 ) {
             auto_ptr<EapPacket> success_eap_packet( new EapPacket( EapPacket::EAP_CODE_SUCCESS, eap_response.getEapPacket().identifier ) );
             return auto_ptr<Payload_EAP> ( new Payload_EAP( success_eap_packet ) );

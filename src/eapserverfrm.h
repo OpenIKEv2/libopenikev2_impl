@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -29,19 +29,19 @@
 namespace openikev2 {
     class EapSm;
     /**
-     This class implements the EapServer abstract class, using the method FRM 
-     @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj.fernandez@dif.um.es, alejandro_perez@dif.um.es>
+     This class implements the EapServer abstract class, using the method FRM
+     @author Pedro J. Fernandez Ruiz, Alejandro Perez Mendez <pedroj@um.es, alex@um.es>
     */
     class EapServerFrm : public EapServer {
             /****************************** ATTRIBUTES ******************************/
         protected:
-  
+
             auto_ptr<ByteArray> challenge;
 	        auto_ptr<EapSm> eap_sm;             /**< EAP State Machine */
 	        string peer_id;
             string aaa_server_addr, aaa_server_secret;
             uint16_t aaa_server_port;
-            
+
             /****************************** METHODS ******************************/
         protected:
 
@@ -63,7 +63,7 @@ namespace openikev2 {
              * @param server_data Server data
              */
             EapServerFrm ( string aaa_server_addr, uint16_t aaa_server_port, string aaa_server_secret);
-            
+
             virtual auto_ptr<Payload_EAP> generateInitialEapRequest( const ID& peer_id  );
             virtual auto_ptr<Payload_EAP> processEapResponse( const Payload_EAP& eap_response );
             virtual void processFinish();

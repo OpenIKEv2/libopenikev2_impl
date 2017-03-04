@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -28,7 +28,7 @@ namespace openikev2 {
 
     /**
      This abstract class represents an AUTH generator, that performs the AUTH payload generation tasks
-     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alejandro_perez@dif.um.es, pedroj.fernandez@dif.um.es>
+     @author Alejandro Perez Mendez, Pedro J. Fernandez Ruiz <alex@um.es, pedroj@um.es>
     */
     class AuthGenerator : public Printable {
             /****************************** METHODS ******************************/
@@ -40,20 +40,20 @@ namespace openikev2 {
              * @return The Certificate Payload collection to be included in the IKE_AUTH message
              */
             virtual AutoVector<Payload_CERT> generateCertificatePayloads( const IkeSa& ike_sa, const vector<Payload_CERT_REQ*> payload_cert_req_r ) = 0;
-            
+
             /**
              * Generate the AUTH payload to be included in the AUTH message
              * @param ike_sa IkeSa
              * @return The new AUTH payload
              */
             virtual auto_ptr<Payload_AUTH> generateAuthPayload( const IkeSa& ike_sa ) = 0;
-            
+
             /**
             * Clones this AuthGenerator
             * @return A new cloned AuthGenerator
             */
             virtual auto_ptr<AuthGenerator> clone() const = 0;
-            
+
             virtual string toStringTab( uint8_t tabs ) const = 0;
 
             virtual ~AuthGenerator();

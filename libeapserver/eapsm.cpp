@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+*   Alejandro Perez Mendez     alex@um.es                                 *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -47,11 +47,11 @@ namespace openikev2 {
         this->aaa_server_addr = aaa_server_addr;
         this->aaa_server_port = aaa_server_port;
         this->aaa_server_secret = aaa_server_secret;
-        
+
         // initialices buffer
         this->buffer = wpabuf_alloc(MAX_MESSAGE_SIZE);
 
-        
+
         // initializes the configuration variables
 
         // specify the allowed method
@@ -98,7 +98,7 @@ namespace openikev2 {
 
 
     auto_ptr< EapSm > EapSm::getEapSmFrm( string aaa_server_addr, uint16_t aaa_server_port, string aaa_server_secret ) {
-        //printf("*********** SE LLAMA A getEapSmFrm()\n");         
+        //printf("*********** SE LLAMA A getEapSmFrm()\n");
         return auto_ptr<EapSm> ( new EapSm( EapPacket::EAP_TYPE_FRM,  aaa_server_addr,  aaa_server_port,  aaa_server_secret ) );
     }
 
@@ -112,8 +112,8 @@ namespace openikev2 {
 
     auto_ptr< EapPacket > EapSm::firststep( ) {
         // obtains the first request data and creates the EapPacket object
-	//printf("*********** SE LLAMA A firststep()\n"); 
-       
+	//printf("*********** SE LLAMA A firststep()\n");
+
 	ByteBuffer tempBuffer( this->eap_iface->eapReqData->size );
         tempBuffer.writeBuffer( wpabuf_head(this->eap_iface->eapReqData), this->eap_iface->eapReqData->used );
         return EapPacket::parse( tempBuffer );
@@ -148,7 +148,7 @@ restep:
 
             ByteBuffer tempBuffer( this->eap_iface->aaaEapReqData->size );
             tempBuffer.writeBuffer( wpabuf_head(this->eap_iface->aaaEapReqData), this->eap_iface->aaaEapReqData->used );
-	        this->aaa_eap_packet_to_send = EapPacket::parse( tempBuffer );        
+	        this->aaa_eap_packet_to_send = EapPacket::parse( tempBuffer );
 
             Log::writeLockedMessage( "EapSm", "Sending AAA request...", Log::LOG_INFO, true );
             AAAController::AAA_send(*this);
@@ -156,7 +156,7 @@ restep:
 
             ByteBuffer buffer_aaa( this->aaa_eap_packet_received->eap_type_data->size() + 5 );
             this->aaa_eap_packet_received->getBinaryRepresentation( buffer_aaa );
-            
+
             this->eap_iface->aaaEapRespData = wpabuf_alloc_copy(buffer_aaa.getRawPointer(), buffer_aaa.size());
             this->eap_iface->aaaEapResp = TRUE;
 
@@ -172,12 +172,12 @@ restep:
             return auto_ptr<EapPacket> ( NULL );
         }
         // obtains the request data and creates the EapPacket object
- 	
-	
+
+
         ByteBuffer tempBuffer( this->eap_iface->eapReqData->size );
         tempBuffer.writeBuffer( wpabuf_head(this->eap_iface->eapReqData), this->eap_iface->eapReqData->used );
 	    return EapPacket::parse( tempBuffer );
-	
+
     }
 
 
@@ -186,11 +186,11 @@ restep:
         this->aaa_semaphore->post();
 
     }
-    
+
     int EapSm::get_eap_user (void *ctx, const u8 *identity, size_t identity_len,
 			    int phase2, struct eap_user *user) {
-	
-	
+
+
         user->methods[0].vendor = EAP_VENDOR_IETF;
         user->methods[0].method = EAP_TYPE_TLS;
         user->methods[1].vendor = EAP_VENDOR_IETF;
@@ -200,7 +200,7 @@ restep:
 	//cout << "*** GET_EAP_USER ***" << endl;
 	return 0;
     }
-    
+
     const char* EapSm::get_eap_req_id_text (void *ctx, size_t *len){
 	//cout << "*** GET_EAP_REQ_ID_TEXT ***" << endl;
 

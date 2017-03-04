@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2005 by                                                 *
- *   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
- *   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
+ *   Alejandro Perez Mendez     alex@um.es                                 *
+ *   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU Lesser General Public            *
@@ -25,7 +25,7 @@
 
 namespace openikev2 {
 
-    AuthVerifierCert::AuthVerifierCert( ) { 
+    AuthVerifierCert::AuthVerifierCert( ) {
         static bool initialized = false;
         if ( !initialized ) {
             OpenSSL_add_all_algorithms();
@@ -37,7 +37,7 @@ namespace openikev2 {
 
     AutoVector< Payload_CERT_REQ > AuthVerifierCert::generateCertificateRequestPayloads( const IkeSa & ike_sa ) {
         AutoVector<Payload_CERT_REQ> result;
-        
+
         if (!this->send_cert_req)
             return result;
 
@@ -64,7 +64,7 @@ namespace openikev2 {
 
             result->push_back( cert_req_x509.release() );
         }
-        
+
         return result;
     }
 
@@ -205,7 +205,7 @@ namespace openikev2 {
 
         for ( vector<CertificateX509*>::const_iterator it = this->ca_certificates->begin(); it != this->ca_certificates->end(); it++ )
             sk_X509_push( cert_stack, ( *it ) ->certificate );
-        
+
         X509_STORE_CTX_init( cert_store_ctx, cert_store, certificate->certificate, NULL );
         X509_STORE_CTX_trusted_stack( cert_store_ctx, cert_stack );
         bool result = X509_verify_cert( cert_store_ctx );

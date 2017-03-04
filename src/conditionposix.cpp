@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Copyright (C) 2005 by                                                 *
-*   Pedro J. Fernandez Ruiz    pedroj.fernandez@dif.um.es                 *
-*   Alejandro Perez Mendez     alejandro_perez@dif.um.es                  *
+*   Pedro J. Fernandez Ruiz    pedroj@um.es                               *
+*   Alejandro Perez Mendez     alex@um.es                                 *
 *                                                                         *
 *   This library is free software; you can redistribute it and/or         *
 *   modify it under the terms of the GNU Lesser General Public            *
@@ -28,7 +28,7 @@ namespace openikev2 {
         pthread_mutex_init( &this->mutex, NULL );
         pthread_cond_init ( &this->condition, NULL );
     }
-    
+
     void ConditionPosix::wait( ) {
         pthread_cond_wait( &this->condition, &this->mutex );
     }
@@ -36,19 +36,19 @@ namespace openikev2 {
     void ConditionPosix::notify( ) {
         pthread_cond_signal( &this->condition );
     }
-    
+
     void ConditionPosix::acquire( ) {
         pthread_mutex_lock( &this->mutex );
     }
 
     void ConditionPosix::release( ) {
-        pthread_mutex_unlock( &this->mutex );        
-    }        
+        pthread_mutex_unlock( &this->mutex );
+    }
 
     ConditionPosix::~ConditionPosix() {
         pthread_mutex_destroy( &this->mutex );
         pthread_cond_destroy ( &this->condition );
     }
-    
+
 }
 
