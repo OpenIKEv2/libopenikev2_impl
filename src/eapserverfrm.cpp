@@ -72,10 +72,6 @@ namespace openikev2 {
 
 
         this->setSharedKey( key );
-
-        //printf ("********** ESTABLECIDA LA CLAVE MSK=[");
-	//cout << otrokey->toStringTab( 4 );
-
     }
 
     vector< EapPacket::EAP_TYPE > EapServerFrm::getSupportedMethods( ) const {

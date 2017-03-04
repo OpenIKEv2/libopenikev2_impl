@@ -234,7 +234,6 @@ namespace openikev2 {
 
 /*        if(eap_response.getEapPacket().eap_type == EapPacket::EAP_TYPE_NAK){
             EapPacket::EAP_TYPE metodo_eap_solicitado = (EapPacket::EAP_TYPE) *(eap_response.getEapPacket().eap_type_data->getRawPointer());
-            cout << "Metodo solicitado por peer: " << EapPacket::EAP_TYPE_STR( metodo_eap_solicitado ) << endl;
             map<EapPacket::EAP_TYPE, EapServer*>::iterator it = this->eap_servers_map.find( metodo_eap_solicitado );
 
             if (it == this->eap_servers_map.end()) {

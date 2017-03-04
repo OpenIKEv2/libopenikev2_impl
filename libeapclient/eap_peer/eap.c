@@ -136,7 +136,6 @@ static int eap_allowed_method(struct eap_sm *sm, int vendor, u32 method)
  */
 SM_STATE(EAP, INITIALIZE)
 {
-	//printf("Enter to INITIALIZE");
 	SM_ENTRY(EAP, INITIALIZE);
 	if (sm->fast_reauth && sm->m && sm->m->has_reauth_data &&
 	    sm->m->has_reauth_data(sm, sm->eap_method_priv)) {
@@ -221,19 +220,15 @@ SM_STATE(EAP, RECEIVED)
  */
 SM_STATE(EAP, GET_METHOD)
 {
-	//printf("Enter to GET_METHOD\n");
 	int reinit;
 	EapType method;
-	//printf("1\n");
 
 	SM_ENTRY(EAP, GET_METHOD);
-	//printf("2\n");
 
 	if (sm->reqMethod == EAP_TYPE_EXPANDED)
 		method = sm->reqVendorMethod;
 	else
 		method = sm->reqMethod;
-	//printf("3\n");
 
 	if (!eap_sm_allowMethod(sm, sm->reqVendor, method)) {
 		wpa_printf(MSG_DEBUG, "EAP: vendor %u method %u not allowed",
@@ -242,7 +237,6 @@ SM_STATE(EAP, GET_METHOD)
 			   sm->reqVendor, method);
 		goto nak;
 	}
-	//printf("4\n");
 
 	/*
 	 * RFC 4137 does not define specific operation for fast
@@ -387,8 +381,8 @@ SM_STATE(EAP, METHOD)
 	wpabuf_free(sm->eapRespData);
 	sm->eapRespData = NULL;
 	sm->eapRespData = sm->m->process(sm, sm->eap_method_priv, &ret, eapReqData);
-	//printf("Salimos de process()\n");	
-	fflush(stdout);	
+	//printf("Salimos de process()\n");
+	fflush(stdout);
 	if (sm->eapRespData==NULL) printf ("La respuesta es NULL\n");
 	fflush(stdout);
 wpa_printf(MSG_DEBUG, "EAP: method process -> ignore=%s "
@@ -812,9 +806,9 @@ static Boolean eap_frm_is_kerberos_available() {
         if(retval){
             printf("fallo al construir nombre servicio\n");
             return FALSE;
-        
+
         }
-        
+
         retval=krb5_parse_name(context,"delia",&client);
         if(retval){
             printf("fallo al construir nombre cliente");
@@ -839,7 +833,7 @@ static Boolean eap_frm_is_kerberos_available() {
 
 //fin delia
 
-       
+
         krb5_cc_default(context,&ccdef);
 
 
@@ -856,8 +850,8 @@ static Boolean eap_frm_is_kerberos_available() {
             printf("se han encontrado credenciales\n");
 
             printf("REALM: %s\n", my_credential.server->realm.data);
-            printf("server: %s\n", my_credential.server->data[0].data);    		
-   printf("server: %s\n", my_credential.server->data[0].data);    		
+            printf("server: %s\n", my_credential.server->data[0].data);
+   printf("server: %s\n", my_credential.server->data[0].data);
 printf("----------------------------------------------\n");
     		fflush(stdout);
 
@@ -870,16 +864,16 @@ printf("----------------------------------------------\n");
         while((retval = krb5_cc_next_cred(context,ccdef,&cursor,&credential))==0) {
     		//printf("REALM: %s\n",credential.server->realm.data);
     		//printf("DATA[0]: %s\n",credential.server->data[0].data);
-    		//printf("DATA[1]: %s\n",credential.server->data[1].data); 
+    		//printf("DATA[1]: %s\n",credential.server->data[1].data);
     		//printf("----------------------------------------------\n");
     		fflush(stdout);
 
-            if(strcmp(credential.server->data[0].data,"krbtgt") == 0  &&   
-               strcmp(credential.server->data[1].data, "ATHENA.MIT.EDU") == 0 ) 
-                return TRUE; 
+            if(strcmp(credential.server->data[0].data,"krbtgt") == 0  &&
+               strcmp(credential.server->data[1].data, "ATHENA.MIT.EDU") == 0 )
+                return TRUE;
         }
 	    return FALSE;
-    
+
 
         // creamos krb5_principal del cliente y el servicio  (krbtgt)
 
@@ -900,7 +894,7 @@ static Boolean eap_sm_allowMethod(struct eap_sm *sm, int vendor,
 	if(method == EAP_TYPE_FRM) {
         //printf("Reconoce que es EAP_FRM\n");
 		if(!eap_frm_is_kerberos_available()) {
-            printf("Kerberos no disponible!!!");        
+            printf("Kerberos no disponible!!!");
             return FALSE;
         }
         //printf("HA LLEGADO UN EAP-FRM...................\n");
@@ -987,7 +981,7 @@ static struct wpabuf * eap_sm_buildNak(struct eap_sm *sm, int id)
 
 	if (methods == NULL){
         	printf("No se obtiene una estructura de metodos para el NAK\n");
-		
+
 		return NULL;
 	}
 	if (sm->reqMethod == EAP_TYPE_EXPANDED)
@@ -1419,11 +1413,11 @@ int eap_peer_sm_step(struct eap_sm *sm)
 		fflush(stdout);
 		if (sm->changed)
 			res = 1;
-		
+
 	} while (sm->changed);
 	//printf("SALIMOS A EAP_PEER_SM_STEP\n");
 	fflush(stdout);
-	
+
 	return res;
 }
 
@@ -2144,7 +2138,7 @@ struct wpabuf* eap_get_eapRespData(struct eap_sm *sm)
 		return NULL;
         }
 	//printf( " ************ no NULLLLL **************\n" );
-	
+
 	resp = sm->eapRespData;
 	sm->eapRespData = NULL;
 

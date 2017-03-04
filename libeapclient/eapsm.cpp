@@ -130,34 +130,22 @@ struct eapol_callbacks EapSm::eapol_cb =
 
         wpabuf_free(this->buffer);
 
-	this->buffer = wpabuf_alloc_copy(buffer.getRawPointer(), buffer.size());
+    	this->buffer = wpabuf_alloc_copy(buffer.getRawPointer(), buffer.size());
 
-	//cout << "state change [" << this->sm->EAP_state << "] -> [" ;
-	if(this->sm == NULL) printf("ESTO ES NULL this->sm");
-	fflush(stdout);
         eap_peer_sm_step( this->sm );
 
-	//cout << this->sm->EAP_state << "]*****************************" << endl;
-
-        // after step, if there is no response available, error
+	    // after step, if there is no response available, error
         if ( !this->response ) {
             Log::writeLockedMessage( "EapSm", "Cannot generate response", Log::LOG_ERRO, true );
-            //printf("*******no falla****\n");
             return auto_ptr<EapPacket> ( NULL );
         }
 
         // obtains the response data and creates the EapPacket object
-//        struct wpabuf* response_buffer = eap_get_eapRespData( this->sm );
-        struct wpabuf* response_buffer = eap_get_eapRespData(this->sm);
+        struct wpabuf* response_buffer = eap_get_eapRespData( this->sm );
 
-	ByteBuffer tempBuffer( response_buffer->size );
-
-
-	//Los datos pueden ir detras de la estructura WPABUF
+    	ByteBuffer tempBuffer( response_buffer->size );
         tempBuffer.writeBuffer( wpabuf_head(response_buffer), 	response_buffer->used );
-
-
-	wpabuf_free(response_buffer);
+	    wpabuf_free(response_buffer);
         return EapPacket::parse( tempBuffer );
     }
 

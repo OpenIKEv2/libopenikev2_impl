@@ -498,8 +498,6 @@ void IkeSaControllerImplOpenIKE::requestChildSaMobility( IpAddress& ike_sa_src_a
 
         this->scheduled_ike_sa_map[ike_sa.my_spi] = false;
 
-        cout << "********* El booleano vale : " << delete_ike_sa << endl;
-
         if ( delete_ike_sa ) {
             // Deletes this ike_sa from the IkeSa list
 

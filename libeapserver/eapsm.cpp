@@ -78,7 +78,6 @@ namespace openikev2 {
         eap_conf.tnc;
 
 
-        //cout << "*** llega aqui ***" << endl;
         this->sm = eap_server_sm_init( this, &eapol_cb, &eap_conf );
 
         this->eap_iface = eap_get_interface(this->sm);
@@ -86,19 +85,15 @@ namespace openikev2 {
         this->eap_iface->eapRestart = FALSE;
         this->eap_iface->portEnabled = TRUE;
 
-        //cout << "*** inicializa la maquina ***" << endl;
         // while not EAP_IDLE state, steps state machine
         while (this->sm->EAP_state != 2 ) {
-            //cout << "*** pasa a otro estado *** [" << this->sm->EAP_state << "]" ;
             eap_server_sm_step( this->sm );
-            //cout << " --> [" << this->sm->EAP_state << "]" << endl ;
         }
     }
 
 
 
     auto_ptr< EapSm > EapSm::getEapSmFrm( string aaa_server_addr, uint16_t aaa_server_port, string aaa_server_secret ) {
-        //printf("*********** SE LLAMA A getEapSmFrm()\n");
         return auto_ptr<EapSm> ( new EapSm( EapPacket::EAP_TYPE_FRM,  aaa_server_addr,  aaa_server_port,  aaa_server_secret ) );
     }
 
@@ -112,9 +107,7 @@ namespace openikev2 {
 
     auto_ptr< EapPacket > EapSm::firststep( ) {
         // obtains the first request data and creates the EapPacket object
-	//printf("*********** SE LLAMA A firststep()\n");
-
-	ByteBuffer tempBuffer( this->eap_iface->eapReqData->size );
+        ByteBuffer tempBuffer( this->eap_iface->eapReqData->size );
         tempBuffer.writeBuffer( wpabuf_head(this->eap_iface->eapReqData), this->eap_iface->eapReqData->used );
         return EapPacket::parse( tempBuffer );
     }
@@ -128,19 +121,15 @@ namespace openikev2 {
         // copy the response into the buffer, mark as response and steps the machine
         this->eap_iface->eapResp = TRUE;
         this->eap_iface->eapRespData = wpabuf_alloc_copy(buffer.getRawPointer(), buffer.size());
-	    this->eap_iface->eapReq = FALSE;
+        this->eap_iface->eapReq = FALSE;
         this->eap_iface->aaaEapReq = FALSE;
         this->eap_iface->eapSuccess = FALSE;
-        //cout << "*** STEP *** [" << this->sm->EAP_state << "]";
 restep:
         eap_server_sm_step( this->sm );
 
-	//cout << " -> [" << this->sm->EAP_state << "]"<< endl;
 
         // after step, if there is a new request available, error
         if ( !this->eap_iface->eapReq && this->eap_iface->aaaEapReq) {
-
-
             Log::writeLockedMessage( "EapSm", "AAA negotiation required.", Log::LOG_INFO, true );
 
             // Puede que haya un EAP para mandar al AAA
@@ -148,7 +137,7 @@ restep:
 
             ByteBuffer tempBuffer( this->eap_iface->aaaEapReqData->size );
             tempBuffer.writeBuffer( wpabuf_head(this->eap_iface->aaaEapReqData), this->eap_iface->aaaEapReqData->used );
-	        this->aaa_eap_packet_to_send = EapPacket::parse( tempBuffer );
+            this->aaa_eap_packet_to_send = EapPacket::parse( tempBuffer );
 
             Log::writeLockedMessage( "EapSm", "Sending AAA request...", Log::LOG_INFO, true );
             AAAController::AAA_send(*this);
@@ -161,7 +150,7 @@ restep:
             this->eap_iface->aaaEapResp = TRUE;
 
             this->eap_iface->aaaEapKeyData = aaa_msk->getRawPointer(); // Ahora no entinendo de donde se saca la MSK
-	        this->eap_iface->aaaEapKeyDataLen = aaa_msk->size();
+            this->eap_iface->aaaEapKeyDataLen = aaa_msk->size();
             this->eap_iface->aaaEapKeyAvailable = TRUE;
 
             goto restep;
@@ -176,7 +165,7 @@ restep:
 
         ByteBuffer tempBuffer( this->eap_iface->eapReqData->size );
         tempBuffer.writeBuffer( wpabuf_head(this->eap_iface->eapReqData), this->eap_iface->eapReqData->used );
-	    return EapPacket::parse( tempBuffer );
+        return EapPacket::parse( tempBuffer );
 
     }
 
@@ -188,26 +177,19 @@ restep:
     }
 
     int EapSm::get_eap_user (void *ctx, const u8 *identity, size_t identity_len,
-			    int phase2, struct eap_user *user) {
-
-
+                int phase2, struct eap_user *user) {
         user->methods[0].vendor = EAP_VENDOR_IETF;
         user->methods[0].method = EAP_TYPE_TLS;
         user->methods[1].vendor = EAP_VENDOR_IETF;
         user->methods[1].method = EapPacket::EAP_TYPE_NONE;
-	user->phase2 = phase2;
+        user->phase2 = phase2;
 
-	//cout << "*** GET_EAP_USER ***" << endl;
-	return 0;
+    return 0;
     }
 
     const char* EapSm::get_eap_req_id_text (void *ctx, size_t *len){
-	//cout << "*** GET_EAP_REQ_ID_TEXT ***" << endl;
-
-	*len = 6;
-
-	return "prueba";
-
+       *len = 6;
+       return "prueba";
     }
 
 

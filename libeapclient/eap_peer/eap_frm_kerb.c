@@ -1,5 +1,5 @@
 /*
- * EAP peer method: EAP-FRM 
+ * EAP peer method: EAP-FRM
  * Copyright (c) 2008, Fernando Bernal Hidalgo <fbernal@um.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,6 @@ static u8 * eap_frm_send_frm_4(struct eap_frm_data *data, u8 identifier, size_t 
 #ifndef CONFIG_NO_STDOUT_DEBUG
 static const char * eap_frm_state_txt(int state)
 {
-	//printf("LLAMANDO A VER ESTADO\n");
 	fflush(stdout);
 	switch (state) {
 	case frm_1:
@@ -255,7 +254,7 @@ static u8 * eap_frm_process_frm_1(struct eap_sm *sm, struct eap_frm_data *data, 
 		ret->ignore = TRUE;
 		return NULL;
 	}
-	
+
 
 	wpa_printf(MSG_DEBUG, "EAP-FRM: Received Request/frm-1");
 
@@ -276,21 +275,21 @@ static u8 * eap_frm_process_frm_1(struct eap_sm *sm, struct eap_frm_data *data, 
 	req = (const struct eap_hdr *) reqData;
 
 //        printf ("Flag bootstraping = %d\n", eapfrm_flag);
-          
+
 	/*krb5_cc_cursor  cursor;
   	krb5_creds credential;
-	u8 found_realm=0;	
+	u8 found_realm=0;
  	krb5_context context;
 	krb5_ccache ccdef;
 	krb5_error_code retval;
-	
+
 	krb5_init_context(&context);
 
  	krb5_cc_default(context,&ccdef);
-	
+
   	krb5_cc_start_seq_get(context,ccdef,&cursor);
     	while(!(retval = krb5_cc_next_cred(context,ccdef,&cursor,&credential))) {
-     		
+
              if(strcmp(credential.server->data[0].data,"krbtgt") == 0  &&   strcmp(credential.server->data[1].data, "UM.ES") == 0 ) {
      			found_realm=1;
 			break;
@@ -303,7 +302,7 @@ static u8 * eap_frm_process_frm_1(struct eap_sm *sm, struct eap_frm_data *data, 
 		krb5_cc_end_seq_get(context,ccdef,&cursor);
 
 	printf("PASANDO DE LOS FREE\n");
-        fflush(stdout); 
+        fflush(stdout);
 	krb5_cc_close(context,ccdef);
 	 printf("PASANDO DE LOS FREE\n");
         fflush(stdout);
@@ -311,7 +310,7 @@ static u8 * eap_frm_process_frm_1(struct eap_sm *sm, struct eap_frm_data *data, 
 	printf("PASANDO DE LOS FREE\n");
 	fflush(stdout);*/
 	//if(found_realm) {
-	
+
 		resp = eap_frm_send_frm_2(data, req->identifier,  csuite_list, csuite_list_len, respDataLen);
 		//printf("SALIENDO DE SEND FRM 2\n");
 		 if (!MUTUAL_REQUIRED && !is_Reactive) {
@@ -326,13 +325,13 @@ static u8 * eap_frm_process_frm_1(struct eap_sm *sm, struct eap_frm_data *data, 
 		printf("ENTRANDO AQUI\n");
 		fflush(stdout);
 		struct wpabuf *respNak = eap_msg_alloc(EAP_VENDOR_IETF, EAP_TYPE_NAK, 1, EAP_CODE_RESPONSE, req->identifier);
-		
+
 		u8 *rpos = wpabuf_head_u8(respNak);
         	rpos += respNak->used;
         	*rpos++ = EAP_TYPE_EXT;
 		respNak->used = 6;
 		 resp =  wpabuf_head_u8(respNak);
-		ret->methodState = METHOD_INIT;	
+		ret->methodState = METHOD_INIT;
 		//ret->decision = DECISION_FAIL;
 		*respDataLen = respNak->used;
 		printf("ENTRANDO A ENVIAR NAKKKKKKKKKKKKKKKKKKKKKKKKKKKKK\n");
@@ -363,8 +362,8 @@ static u8 * eap_frm_send_frm_2(struct eap_frm_data *data, u8 identifier, const u
 	struct eap_frm_csuite *csuite;
 	u16 message1_len;
 
-	// KRB5 related variables 
-	
+	// KRB5 related variables
+
 	krb5_data recv_data;
 	krb5_data cksum_data;
 	krb5_error_code retval;
@@ -440,7 +439,7 @@ static u8 * eap_frm_send_frm_2(struct eap_frm_data *data, u8 identifier, const u
 	fflush(stdout);
     retval = krb5_get_credentials(context, KRB5_GC_CACHED, ccdef, &my_creds, &creds);
 	 krb5_data *outbuf_aux = NULL;
-	
+
 	//if(creds == NULL) printf("ES NULL CREDS DESPUES DE CREDENDITALs\n");
 	//fflush(stdout);
 	//printf("PASANDO DE CREADS\n");
@@ -481,7 +480,7 @@ static u8 * eap_frm_send_frm_2(struct eap_frm_data *data, u8 identifier, const u
 	krb5_free_creds(context, creds);
 
     }
-	
+
 	u8 *message1 = NULL;
 
 	//F.BERNAL -- add payload
@@ -498,19 +497,19 @@ static u8 * eap_frm_send_frm_2(struct eap_frm_data *data, u8 identifier, const u
 	//F.BERNAL -- add length to len
 	len = 1 + 2 + message1_len /*+ 1 + 2 + message2_len*/; //1+2 codigo y long frm
 
-	
+
 	struct wpabuf *resp1 = eap_msg_alloc(EAP_VENDOR_IETF,EAP_TYPE_FRM, len,EAP_CODE_RESPONSE,identifier);
 
 	if (resp1 == NULL) {
 		eap_frm_state(data,FAILURE);
 		return NULL;
 	}
-	
+
 	rpos = wpabuf_head_u8(resp1);
 	rpos += resp1->used;
 
 	*rpos++ = EAP_FRM_OPCODE_FRM_2;
-	
+
 	WPA_PUT_BE16(rpos,message1_len/*+message2_len*/);
 	rpos +=2;
 	os_memcpy(rpos,message1,message1_len);
@@ -731,7 +730,7 @@ krb5_error_code retval;
 		int i=0;
 	/*	printf("VALOR DE MSK\n");
 		for(i=0;i<msk_len;i++) {
-			printf("%X:",*(key_derived+i));		
+			printf("%X:",*(key_derived+i));
 		}*/
                 krb5_free_keyblock(context, keyblock);
                 free (key_derived);
@@ -760,13 +759,13 @@ static u8 * eap_frm_process_frm_3(struct eap_sm *sm, struct eap_frm_data *data, 
 
 	pos = payload;
 	end = payload + payload_len;
-	
+
 	wpa_printf(MSG_DEBUG, "EAP-FRM: Received Request/frm-3");
 	alen = WPA_GET_BE16(pos);
 	pos+=2;
-	
+
 	u8 *message4 = malloc(alen);
-	u16 message4_len = alen;	
+	u16 message4_len = alen;
 	memcpy(message4,pos,message4_len);
 	pos+=message4_len;
 
@@ -774,11 +773,11 @@ static u8 * eap_frm_process_frm_3(struct eap_sm *sm, struct eap_frm_data *data, 
 
 	krb5_data respAP;
 	respAP.length = message4_len;
-	
+
 	respAP.data = (char *) malloc(message4_len*sizeof(char));
 	memcpy(respAP.data,message4,message4_len);
-	
-	if ((&respAP) && (&respAP)->length && ((&respAP)->data[0] == 0x6d || (&respAP)->data[0] == 0x4d)) {	
+
+	if ((&respAP) && (&respAP)->length && ((&respAP)->data[0] == 0x6d || (&respAP)->data[0] == 0x4d)) {
 	//if(krb5_is_tgs_rep(&respAP)) { //session ticket from kdc
 		 /*** Process and check ASREP ***/
 		//printf("ENTRNADO A COMPROBAR TGS\n");
@@ -807,23 +806,23 @@ static u8 * eap_frm_process_frm_3(struct eap_sm *sm, struct eap_frm_data *data, 
 			//krb5_auth_con_free(context,auth_context);
 		krb5_free_context(context);
 		u8 *resp;
-		req = (const struct eap_hdr *) reqData;		
-		//sending ticket to obtain a service access 
+		req = (const struct eap_hdr *) reqData;
+		//sending ticket to obtain a service access
 		resp = eap_frm_send_frm_2(data, req->identifier,  csuite_list, csuite_list_len, respDataLen);
 		//here this state must be success to optimize
 		if(MUTUAL_REQUIRED)
 			eap_frm_state(data, frm_3);
 		else {
-			 eap_frm_generate_key(data);	
+			 eap_frm_generate_key(data);
 			 eap_frm_state(data, SUCCESS);
 			 ret->methodState = METHOD_DONE;
 		         ret->decision = DECISION_UNCOND_SUCC;
 		}
-		
+
 		return resp;
 
 	}
-	
+
         else if ((&respAP) && (&respAP)->length && ((&respAP)->data[0] == 0x6f || (&respAP)->data[0] == 0x4f)) {
 //else if (krb5_is_ap_rep(&respAP)) { //response from service
 		 if ((retval = krb5_rd_rep(context, auth_context, &respAP, &rep_ret))) {
@@ -832,7 +831,7 @@ static u8 * eap_frm_process_frm_3(struct eap_sm *sm, struct eap_frm_data *data, 
         		com_err("KERBEROS", retval, " while parsing and decrypting received AP-REP from service server");
 	        	exit(1);
 		}
-		
+
 
 		eap_frm_generate_key(data);
 
@@ -842,12 +841,12 @@ static u8 * eap_frm_process_frm_3(struct eap_sm *sm, struct eap_frm_data *data, 
                         krb5_auth_con_free(context,auth_context);
                 krb5_free_context(context);
 	}
-	
-	
+
+
 	if (pos != end) {
 		wpa_printf(MSG_DEBUG, "EAP-FRM: Ignored %d bytes of extra data in the end of frm-2", end - pos);
 	}
-	
+
 	req = (const struct eap_hdr *) reqData;
 
 	resp = eap_frm_send_frm_4(data, req->identifier, respDataLen);
@@ -879,13 +878,13 @@ static u8 * eap_frm_send_frm_4(struct eap_frm_data *data, u8 identifier, size_t 
 	struct wpabuf * resp1 = eap_msg_alloc(EAP_VENDOR_IETF,EAP_TYPE_FRM, len,EAP_CODE_RESPONSE,identifier);
 	if (resp1 == NULL)
 		return NULL;
-	
+
 	rpos = wpabuf_head_u8(resp1);
 	rpos += resp1->used;
 
 	*rpos++ = EAP_FRM_OPCODE_FRM_4;
 	//WPA_PUT_BE16(rpos,0);
-	
+
 	//F.BERNAL -- copy data in rpos with memcpy (if it is necessary)
 
 	resp1->used = len + 5;
@@ -904,7 +903,7 @@ static u8 * eap_frm_send_frm_4(struct eap_frm_data *data, u8 identifier, size_t 
 	return  wpabuf_head_u8(resp1);
 }
 
-static struct wpabuf * eap_frm_process(struct eap_sm *sm, void *priv, struct eap_method_ret *ret, const struct wpabuf *reqData_out) 
+static struct wpabuf * eap_frm_process(struct eap_sm *sm, void *priv, struct eap_method_ret *ret, const struct wpabuf *reqData_out)
 {
 
 
@@ -914,7 +913,7 @@ static struct wpabuf * eap_frm_process(struct eap_sm *sm, void *priv, struct eap
 	u16 respDataLen;
         const u8 *pos;
         size_t len;
-       	//printf("ENTRANDO EN FRM PROCESS\n"); 
+       	//printf("ENTRANDO EN FRM PROCESS\n");
 	pos = eap_hdr_validate(EAP_VENDOR_IETF, EAP_TYPE_FRM, reqData_out, &len);
 	u8 * reqData = wpabuf_head_u8(reqData_out);
 	u16 reqDataLen = reqData_out->used;

@@ -34,8 +34,6 @@
 namespace openikev2 {
 
     IpAddressOpenIKE::IpAddressOpenIKE( string address ) {
-
-        //printf("Creando IP: %s\n", address.c_str() );
         memset( &this->address, 0, sizeof( sockaddr_storage ) );
 
         struct in_addr inaddr;
@@ -255,17 +253,13 @@ namespace openikev2 {
 
             sockaddr_in* addr4 = ( sockaddr_in* ) & this->address;
             inet_ntop(address.ss_family, (void *)&(addr4->sin_addr), wanted, sizeof(wanted));
-            //printf("*********** IP=%s \n",wanted);
 
             getifaddrs(&addrs);
             for (iap = addrs; iap != NULL ; iap = iap->ifa_next) {
         	if (iap->ifa_addr && (iap->ifa_flags & IFF_UP) && iap->ifa_addr->sa_family == AF_INET) {
         	    sa = (struct sockaddr_in *)(iap->ifa_addr);
         	    inet_ntop(iap->ifa_addr->sa_family, (void *)&(sa->sin_addr), current, sizeof(current));
-        	    //printf("AAAAAAAAAAAAAA IFNAME=%s \n",iap->ifa_name);
-        	    //printf("BBBBBB BUF [%s]\n", current);
         	    if (!strcmp(wanted, current)) {
-        	       //printf("*********** IFNAME=%s \n",iap->ifa_name);
         	       return string (iap->ifa_name);
         	    }
                 }
@@ -282,17 +276,12 @@ namespace openikev2 {
             sockaddr_in6* addr6 = ( sockaddr_in6* ) & this->address;
             inet_ntop(address.ss_family, (void *)&(addr6->sin6_addr), wanted, sizeof(wanted));
 
-            //printf("*********** IP=%s \n",wanted);
-
             getifaddrs(&addrs);
             for (iap = addrs; iap != NULL ; iap = iap->ifa_next) {
         	if (iap->ifa_addr && (iap->ifa_flags & IFF_UP) && iap->ifa_addr->sa_family == AF_INET6) {
         	    sa = (struct sockaddr_in6 *)(iap->ifa_addr);
         	    inet_ntop(iap->ifa_addr->sa_family, (void *)&(sa->sin6_addr), current, sizeof(current));
-        	    //printf("AAAAAAAAAAAAAA IFNAME=%s \n",iap->ifa_name);
-        	    //printf("BBBBBB BUF [%s]\n", current);
         	    if (!strcmp(wanted, current)) {
-        	       //printf("*********** IFNAME=%s \n",iap->ifa_name);
         	       return string (iap->ifa_name);
         	    }
                 }

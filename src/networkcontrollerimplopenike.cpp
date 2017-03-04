@@ -252,8 +252,6 @@ auto_ptr<SocketAddress> NetworkControllerImplOpenIKE::getSocketAddress( auto_ptr
 
 
 void NetworkControllerImplOpenIKE::createRoute( const IpAddress& addr_src, const IpAddress& addr_dst, uint8_t prefixlen, const IpAddress& gateway, int metric, string ifname ) {
-        //cout << endl << "CREAR RUTA: " << addr_src.toString() << " " << addr_dst.toString() << "/" << (int) prefixlen << " gateway: " << gateway.toString() << " interface: " << ifname << endl;
-
     struct {
         nlmsghdr n;
         rtmsg r;
@@ -292,7 +290,7 @@ void NetworkControllerImplOpenIKE::createRoute( const IpAddress& addr_src, const
 
     if ( netlinkReceiveAck( fd ) != 0 ) {
             //close( fd );
-        cout << endl << "Error route creation. May be it already exists.";
+//        cout << endl << "Error route creation. May be it already exists.";
             //throw NetworkException( "Cannot create indicated route" );
     }
 
@@ -300,8 +298,6 @@ void NetworkControllerImplOpenIKE::createRoute( const IpAddress& addr_src, const
 }
 
 void NetworkControllerImplOpenIKE::deleteRoute( const IpAddress& addr_dst, uint8_t prefixlen, const IpAddress& gateway, int metric, string ifname ) {
-        //cout << endl << "BORRAR RUTA: " << addr_dst.toString() << "/" << (int) prefixlen << " gateway: " << gateway.toString() << " interface: " << ifname << endl;
-
     struct {
         nlmsghdr n;
         rtmsg r;
@@ -338,7 +334,7 @@ void NetworkControllerImplOpenIKE::deleteRoute( const IpAddress& addr_dst, uint8
 
     if ( netlinkReceiveAck( fd ) != 0 ) {
             //close( fd );
-        cout << endl << "Error route deletion. May be it is already deleted.";
+    //        cout << endl << "Error route deletion. May be it is already deleted.";
             //perror("AAA: ");
             //throw NetworkException( "Cannot delete indicated route" );
     }
@@ -347,7 +343,6 @@ void NetworkControllerImplOpenIKE::deleteRoute( const IpAddress& addr_dst, uint8
 }
 
 void NetworkControllerImplOpenIKE::createAddress( const IpAddress& addr, uint8_t prefixlen, string ifname ) {
-        //cout << endl << "VAMOS A CREAR ESTO: " << addr.toString() << "/" << (int) prefixlen << " interface: " << ifname << endl;
     struct {
 
         struct nlmsghdr n;
@@ -376,7 +371,7 @@ void NetworkControllerImplOpenIKE::createAddress( const IpAddress& addr, uint8_t
     netlinkSendMsg( fd, req.n );
 
     if ( netlinkReceiveAck( fd ) != 0 ) {
-        cout << endl << "Error address creation. May be it is already created.";
+            // cout << endl << "Error address creation. May be it is already created.";
             //close( fd );
             //throw NetworkException( "Cannot create indicated address" );
     }
@@ -386,16 +381,11 @@ void NetworkControllerImplOpenIKE::createAddress( const IpAddress& addr, uint8_t
 
 
 void NetworkControllerImplOpenIKE::deleteAddress( const IpAddress& addr, uint8_t prefixlen, string ifname ) {
-        //cout << endl << "VAMOS A BORRAR ESTO: " << addr.toString() << "/" << (int) prefixlen << " interface: " << ifname << endl;
     struct {
-
         struct nlmsghdr n;
-
         struct ifaddrmsg ifa;
         char buf[ 256 ];
-    }
-
-    req;
+    } req;
 
     memset( &req, 0, sizeof( req ) );
 
@@ -417,7 +407,7 @@ void NetworkControllerImplOpenIKE::deleteAddress( const IpAddress& addr, uint8_t
     if ( netlinkReceiveAck( fd ) != 0 ) {
             //close( fd );
             //throw NetworkException( "Cannot delete indicated address" );
-        cout << endl << "Error address deletion. May be it is already deleted.";
+            // cout << endl << "Error address deletion. May be it is already deleted.";
 
     }
 
@@ -445,11 +435,8 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::generateIpv4AddressDhcp( IkeSa
     char* subnet_pointer = (char *) &subnet;
     for ( uint8_t i = 0; i < 4 ; i++ ) {
         mask_temp->writeInt8( subnet_pointer[i] );
-            //printf("************* %d\n", subnet_pointer[i]);
     }
     auto_ptr<ByteArray> mask ( mask_temp );
-
-	//cout << "MASCARA:" << mask->toString() << endl;
 
     *netmask = mask->clone();
 
@@ -475,9 +462,6 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::generateIpv4AddressFixed( IkeS
         // Generates the mask based on the prefixlen
     auto_ptr<ByteArray> mask = fixed_prefix->getMask();
 
-
-	//cout << "MASCARA:" << mask->toString() << endl;
-//pedro
     *netmask = mask->clone();
 
         // Generates a random address with the correct prefix
@@ -536,8 +520,6 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::generateIpv6AddressFixed( IkeS
         // Generates the mask based on the prefixlen
     auto_ptr<ByteArray> mask = fixed_prefix->getMask();
 
-	//cout << "MASCARA:" << mask->toString() << endl;
-//pedro
     *netmask = mask->clone();
 
         // Generates a random address with the correct prefix
@@ -606,8 +588,6 @@ auto_ptr<IpAddress> NetworkControllerImplOpenIKE::generateIpv6AddressAutoconf( I
         // Generates the mask based on the prefixlen
     auto_ptr<ByteArray> mask = autoconf_prefix->getMask();
 
-	//cout << "MASCARA:" << mask->toString() << endl;
-//pedro
     *netmask = mask->clone();
 
     auto_ptr<ByteArray> generated_peer_addr = ike_sa.peer_addr->getIpAddress().getBytes();
@@ -1372,9 +1352,6 @@ void NetworkControllerImplOpenIKE::startRadvd() {
     StringAttribute* radvd_config_file_attr = general_conf->attributemap->getAttribute<StringAttribute>( "radvd_config_file" );
     if ( radvd_config_file_attr != NULL )
         radvd_config_file = radvd_config_file_attr->value;
-
-	//cout << "radvd_enabled=" << radvd_enabled << endl;
-	//cout << "radvd_config_file=" << radvd_config_file << endl;
 
     if (radvd_enabled) {
             // Setup the radvd infrastructure

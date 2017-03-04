@@ -61,7 +61,6 @@ RadvdWrapper::RadvdWrapper( string config_file ) {
         if (sock < 0)
             throw NetworkException( "radvd: Cannot open raw socket for ICMP RouteAdv sending." );
         //Log::writeLockedMessage( "NetworkController", "ICMP socket opened for RouterAdv messages.", Log::LOG_INFO, true );
-        cout << "radvd: ICMP socket opened for RouterAdv messages." << endl;
 
         /* parse config file */
         conf_file = (char *) malloc (strlen(config_file.c_str()+1));
@@ -70,7 +69,6 @@ RadvdWrapper::RadvdWrapper( string config_file ) {
         if (readin_config(config_file.c_str()) < 0)
             throw NetworkException( "radvd: Error reading config file." );
         //Log::writeLockedMessage( "NetworkController", "Radvd config file parsed successfully.", Log::LOG_INFO, true );
-        cout << "radvd: Radvd config file parsed successfully." << endl;
         /* fill interface structure */
         config_interface();
 
@@ -136,15 +134,12 @@ int RadvdWrapper::sendRA(struct in6_addr *dest){
 			/* send an initial advertisement */
 			send_ra(sock, iface, dest);
 			//Log::writeLockedMessage( "NetworkController", "Radvd sends a Router Advertisement to peer.", Log::LOG_INFO, true );
-			cout << "radvd: Radvd sends a Router Advertisement to peer with address=";
-
 			auto_ptr<ByteBuffer> dest_temp ( new ByteBuffer ( 16 ) );
 
 			char* pointer = (char *) dest;
 			for ( uint8_t i = 0; i < 16 ; i++ ) {
 			    dest_temp->writeInt8( pointer[i] );
 			}
-			cout << dest_temp->toString() << endl;
 		}
 	}
         return 0;
@@ -152,17 +147,14 @@ int RadvdWrapper::sendRA(struct in6_addr *dest){
 
 
 int  RadvdWrapper::readin_config(const char *fname) {
-	cout << "readin_config()" << endl;
 	if ((yyin = fopen(fname, "r")) == NULL)
 	{
-		cout << "radvd: can't open config file." << endl;
 		//flog(LOG_ERR, "can't open %s: %s", fname, strerror(errno));
 		return (-1);
 	}
 
 	if (yyparse() != 0)
 	{
-		cout << "radvd: error parsing or activating the config file" << endl;
 		//flog(LOG_ERR, "error parsing or activating the config file: %s", fname);
 		return (-1);
 	}
@@ -197,7 +189,6 @@ RadvdWrapper::~RadvdWrapper() {
     //AlarmController::removeAlarm(*this->periodic_send_alarm);
 
     //Log::writeLockedMessage( "NetworkController", "Close ICMP socket and release radvd stuff.", Log::LOG_INFO, true );
-    cout << "radvd: Closing ICMP socket and releasing radvd resources." << endl;
 }
 
 }

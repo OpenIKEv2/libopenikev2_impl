@@ -267,7 +267,6 @@ namespace openikev2 {
 
         for ( vector<SocketData>::iterator it = this->socket_collection.begin(); it != this->socket_collection.end(); it++ ) {
             if ( *it->sock_address == src_address ) {
-				//printf("\n Lista sockets: %d\n", this->socket_collection.size());
                 delete it->sock_address;
                 FD_CLR( it->socket, &this->socket_set );
                 close( it->socket );

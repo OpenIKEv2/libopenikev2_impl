@@ -521,7 +521,7 @@ int aes_128_cbc_decrypt(const u8 *key, const u8 *iv, u8 *data, size_t data_len)
 //LO NUESTRO
 
 /********************************************************************/
-/*       HMAC- WRAP/UNWRAP + UTILITY FUNCTIONS                      */                    
+/*       HMAC- WRAP/UNWRAP + UTILITY FUNCTIONS                      */
 /********************************************************************/
 
 /**
@@ -537,28 +537,28 @@ u16 hmac_wrap (const u8 *kek, const u8 *plain, u16 plain_len, u8 *cipher){
     u8 pad_len = 0;
     // Get the pad length
     if ((2 + plain_len) % 8) {
-       pad_len = 8 - ((2 +plain_len) % 8); 
+       pad_len = 8 - ((2 +plain_len) % 8);
     }
-    
+
     // Allocate memory for padded hmac
     u8 *lkey_pad = malloc(2 + plain_len + pad_len);
-    
+
     u16 temp_plain_len = htons(plain_len);
 
     // Build the padded hmac
     memcpy(&lkey_pad[0], &temp_plain_len, 2); // the length of hmac
     memcpy(&lkey_pad[2], plain, plain_len); // followed by the hmac
     RAND_bytes(&lkey_pad[plain_len+2], pad_len); // and endded with random values (padding)
-    
+
     // prepare variables to call aes_wrap
     u16 n = (2 + plain_len + pad_len) / 8;  // how many 64-bit blocks are there?
-    
-    // All the buffers passed to aes_wrap function 
+
+    // All the buffers passed to aes_wrap function
     // must have the necesary memory allocated.
     if (aes_wrap(kek, n, lkey_pad, cipher)==0){
         free (lkey_pad);
         return 2 + plain_len + pad_len + 8;
-    } 
+    }
     else {
         free (lkey_pad);
         return 0;
@@ -641,22 +641,22 @@ void print_hex(u8 *buffer, u16 buffer_len){
  */
 u16 generate_nonce(u8 **buffer, u16 min, u16 max){
     u8 nonce_len = 0;
-    
+
     if (min > max) {
         *buffer = NULL;
         return 0;
     }
     else if (min < 8){
         *buffer = NULL;
-        return 0;    
+        return 0;
     }
     else if (min == max)
         nonce_len = min;
     else {
         RAND_bytes(&nonce_len, 1);
         nonce_len = (nonce_len % (max - min + 1)) + min;
-    }   
-    
+    }
+
     u8 *nonce = malloc (nonce_len);
     RAND_bytes(nonce, nonce_len);
 
@@ -684,7 +684,7 @@ u16 add_payload(u8 * buffer_dest, u16 pos, u8 * buffer_orig, u16 len){
 
 /**
  * get_payload - Get a payload from a buffer
- * @buffer: source buffer from the payload is read 
+ * @buffer: source buffer from the payload is read
  * @pos: The position of the source buffer that the payload begins
  * @payload_ptr: a pointer to store the new buffer with the data of the payload (musn't be allocated, allocated inside)
  * Returns: The size of the returned buffer.
@@ -696,7 +696,7 @@ u16 get_payload(u8 * buffer, u16 *pos, u8 **payload_ptr){
     *pos += 2;
     u8 *payload = malloc(payload_len);
     memcpy (payload, &buffer[*pos], payload_len);
-    *pos += payload_len; 
+    *pos += payload_len;
     *payload_ptr = payload;
     return payload_len;
 }
@@ -707,10 +707,10 @@ u16 get_payload(u8 * buffer, u16 *pos, u8 **payload_ptr){
  * Returns: message1 length.
  */
 u16 build_message1( u8 *Kas,  u16 Kas_len,
-                    u8 *id_A, u16 id_A_len, 
+                    u8 *id_A, u16 id_A_len,
                     u8 *id_B, u16 id_B_len,
                     u8 *Na  , u16 Na_len,
-                    u32 SEQas, 
+                    u32 SEQas,
                     u8 **message1_ptr)
                 {
     u8 *towrap=NULL;
@@ -719,26 +719,25 @@ u16 build_message1( u8 *Kas,  u16 Kas_len,
     // Buffers for wrapping
     towrap = malloc(Na_len + 4 + id_B_len + 6);
     wrapped = malloc(Na_len + 4 + id_B_len + 6 + 32);
-   
+
     // Build the message 1
     u32 temp_seq = htonl(SEQas);
-    
-    u16 towrap_len = 0; 
+
+    u16 towrap_len = 0;
     towrap_len = add_payload(towrap, towrap_len, Na             , Na_len  );
     towrap_len = add_payload(towrap, towrap_len,(u8*) &temp_seq , 4       );
     towrap_len = add_payload(towrap, towrap_len, id_B           , id_B_len   );
- 
+
     u16 wrapped_len = hmac_wrap(Kas, towrap, towrap_len, wrapped);
-    
+
     if (wrapped_len <= 0){
         free (towrap);
         free (wrapped);
-        printf("Error in hmac_wrap!\n");
-        return 0; 
+        return 0;
     }
 
     u8 *message1 = malloc( id_A_len + wrapped_len + 4 );
-    
+
     u16 message1_len = 0;
     message1_len = add_payload(message1, message1_len, id_A   , id_A_len    );
     message1_len = add_payload(message1, message1_len, wrapped, wrapped_len );
@@ -755,9 +754,9 @@ u16 build_message1( u8 *Kas,  u16 Kas_len,
  * Returns: message2 length.
  */
 u16 build_message2( u8 *Kbs, u16 Kbs_len,
-                    u8 *id_B, u16 id_B_len, 
+                    u8 *id_B, u16 id_B_len,
                     u8 *Nb, u16 Nb_len,
-                    u8 *message1, u16 message1_len, 
+                    u8 *message1, u16 message1_len,
                     u8 **message2_ptr)
                 { // TO BE EXECUTED IN B
     u8 *towrap=NULL;
@@ -766,7 +765,7 @@ u16 build_message2( u8 *Kbs, u16 Kbs_len,
     // Extract id_A from message 1
     u16 message1_pos = 0;
     u8 *id_A = NULL;
-    u16 id_A_len = get_payload(message1, &message1_pos, &id_A); 
+    u16 id_A_len = get_payload(message1, &message1_pos, &id_A);
 
     // Buffers for wrapping
     towrap = malloc(Nb_len + id_A_len + 4);
@@ -781,7 +780,6 @@ u16 build_message2( u8 *Kbs, u16 Kbs_len,
     if (wrapped_len <= 0){
         free (towrap);
         free (wrapped);
-        printf("Error in hmac_wrap!\n");
         return 0;
     }
 
@@ -806,10 +804,10 @@ void build_message3_and_4 ( u8 *Kas, u16 Kas_len,
                             u8 *Kbs, u16 Kbs_len,
                             u8 *Ns, u16 Ns_len,
                             u8 *Kab, u16 Kab_len,
-                            u32 LKab, 
+                            u32 LKab,
                             u32 SEQsa,
-                            u8 *message1, u16 message1_len, 
-                            u8 *message2, u16 message2_len, 
+                            u8 *message1, u16 message1_len,
+                            u8 *message2, u16 message2_len,
                             u8 **message3_ptr, u16 *message3_len,
                             u8 **message4_ptr, u16 *message4_len
 )
@@ -828,18 +826,17 @@ void build_message3_and_4 ( u8 *Kas, u16 Kas_len,
     u8 *id_A = NULL;
     u16 id_A_len = get_payload(message1, &message1_pos, &id_A);
     // Unwrapping {Na, SEQas, id_B}Kas
-    u16 tounwrap_len = get_payload(message1, &message1_pos, &tounwrap);  
+    u16 tounwrap_len = get_payload(message1, &message1_pos, &tounwrap);
     unwrapped = malloc(tounwrap_len-8);
     u16 unwrapped_len = hmac_unwrap(Kas, tounwrap, tounwrap_len, unwrapped);
     if (unwrapped_len <= 0){
         free (tounwrap);
         free (unwrapped);
-        printf("Error in hmac_unwrap!\n");
         *message3_len = 0;
         *message4_len = 0;
         return;
     }
-    
+
     u16 pos1 = 0;
     // Getting Na
     u8 *Na = NULL;
@@ -865,18 +862,17 @@ void build_message3_and_4 ( u8 *Kas, u16 Kas_len,
     u16 id_B_len = get_payload(message2,&message2_pos, &id_B);
 
     // Unwrapping {Nb,id_A}Kbs
-    tounwrap_len = get_payload(message2, &message2_pos, &tounwrap);  
+    tounwrap_len = get_payload(message2, &message2_pos, &tounwrap);
     unwrapped = malloc(tounwrap_len-8);
     unwrapped_len = hmac_unwrap(Kbs, tounwrap, tounwrap_len, unwrapped);
     if (unwrapped_len <= 0){
         free (tounwrap);
         free (unwrapped);
-        printf("Error in hmac_unwrap!\n");
         *message3_len = 0;
         *message4_len = 0;
         return;
     }
-    
+
     u16 pos = 0;
     u8 *Nb = NULL;
     u16 Nb_len = get_payload(unwrapped,&pos, &Nb);
@@ -887,61 +883,25 @@ void build_message3_and_4 ( u8 *Kas, u16 Kas_len,
     free (tounwrap);
     free (unwrapped);
 
-
-
-    printf("  *** (PARSED FROM MESSAGE 1 & 2) ***\n");
-    printf("A:");
-    print_hex(id_A,id_A_len);    
-
-    printf("B:");
-    print_hex(id_B,id_B_len);
-
-    printf("A_wrapped:");
-    print_hex(id_A_wrapped,id_A_wrapped_len);    
-
-    printf("B_wrapped:");
-    print_hex(id_B_wrapped,id_B_wrapped_len);
-
-    printf("Na:");
-    print_hex(Na,Na_len);
-
-    printf("Nb:");
-    print_hex(Nb,Nb_len);
-
-    printf("SEQas:\n%u(decimal)\n",SEQas);
-
-
-
-
-    printf("  *** (CHECK ISSUES) ***\n");
-    printf("Checking if IDs match....");
     // Test id_A
     if ((id_A_len != id_A_wrapped_len) && memcmp(id_A, id_A_wrapped, id_A_len)!=0) {
-        printf("Error: id_A and id_A_wrapped doesn't match!\n");
         *message3_len = 0;
         *message4_len = 0;
-        return;        
+        return;
     }
 
     // Test id_B
     if ((id_B_len != id_B_wrapped_len) && memcmp(id_B, id_B_wrapped, id_B_len)!=0) {
-        printf("Error: id_B and id_B_wrapped doesn't match!\n");
         *message3_len = 0;
         *message4_len = 0;
-        return;       
+        return;
     }
-    printf("OK!\n");
-    
-    printf("Checking if SEQ numbers match....");
     // Here we must test the SEQas number.
     if (SEQas != SEQsa) {
-        printf("Error: Sequence numbers doesn't match! %d != %d \n", SEQas, SEQsa);
         *message3_len = 0;
         *message4_len = 0;
-        return;       
+        return;
     }
-    printf("OK!\n");
-
 
     // Build message 3
     // Buffers for wrapping
@@ -963,7 +923,6 @@ void build_message3_and_4 ( u8 *Kas, u16 Kas_len,
     if (wrapped_len <= 0){
         free (towrap);
         free (wrapped);
-        printf("Error in hmac_wrap!\n");
         *message3_len = 0;
         *message4_len = 0;
         return;
@@ -995,7 +954,6 @@ void build_message3_and_4 ( u8 *Kas, u16 Kas_len,
         free (towrap);
         free (wrapped);
         free (*message3_ptr);
-        printf("Error in hmac_wrap!\n");
         *message3_len = 0;
         *message4_len = 0;
         return;
@@ -1025,17 +983,16 @@ int process_and_check_message3( u8 *Kbs, u16 Kbs_len,
 
     // Parse message 3
     // Unwrapping message3
-    u16 tounwrap_len = message3_len;  
+    u16 tounwrap_len = message3_len;
     tounwrap = message3;
     unwrapped = malloc(tounwrap_len-8);
     u16 unwrapped_len = hmac_unwrap(Kbs, tounwrap, tounwrap_len, unwrapped);
     if (unwrapped_len <= 0){
         free (unwrapped);
-        printf("Error in hmac_unwrap!\n");
         // return failure
         return 0;
     }
-    
+
     u16 pos3 = 0;
     // Getting id_A
     u8 *id_A = NULL;
@@ -1048,61 +1005,33 @@ int process_and_check_message3( u8 *Kbs, u16 Kbs_len,
     u16 Na_len = get_payload(unwrapped,&pos3, &Na);
     // Getting Nb
     u8 *Nb = NULL;
-    u16 Nb_len = get_payload(unwrapped,&pos3, &Nb);    
+    u16 Nb_len = get_payload(unwrapped,&pos3, &Nb);
     // Getting Ns
     u8 *Ns = NULL;
-    u16 Ns_len = get_payload(unwrapped,&pos3, &Ns);    
+    u16 Ns_len = get_payload(unwrapped,&pos3, &Ns);
     // Getting Kab
     u8 *Kab = NULL;
-    u16 Kab_len = get_payload(unwrapped,&pos3, &Kab);   
+    u16 Kab_len = get_payload(unwrapped,&pos3, &Kab);
     // Getting LKab
     u32 temp_LKab, LKab;
     u8 *temp = NULL;
     u16 LKab_len = get_payload(unwrapped,&pos3,&temp);
     memcpy(&temp_LKab,temp,4);
     LKab = ntohl(temp_LKab);
-    
-    //DEBUG
-
-    printf("  *** (PARSED FROM MESSAGE 3) ***\n");
-    printf("A:");
-    print_hex(id_A,id_A_len);    
-
-    printf("B:");
-    print_hex(id_B,id_B_len);
-
-    printf("Na:");
-    print_hex(Na,Na_len);
-
-    printf("Nb:");
-    print_hex(Nb,Nb_len);
-
-    printf("Ns:");
-    print_hex(Ns,Ns_len);
-
-    printf("Kab:");
-    print_hex(Kab,Kab_len);
-
-    printf("LKab:\n%u (decimal)\n",LKab);
 
 
     // Free unwrapping buffers
     free (unwrapped);
-
-    printf("  *** (CHECK ISSUES) ***\n");
-    printf("Checking if Nb matches....");
     // Check if the received nonces are equal to the originals
     if (memcmp(Nb,Nb_orig,Nb_len)!=0){
-        printf("ERROR: Nonces doesn't match!\n");
-        // Return failure        
+        // Return failure
         return 0;
     }
-    printf("OK!\n");
 
     // Store Kab and its LKab lifetime
     *Kab_ptr = Kab;
     *Kab_len_ptr = Kab_len;
-    *LKab_ptr = LKab;    
+    *LKab_ptr = LKab;
 
     // Return success
     return 1;
@@ -1126,26 +1055,20 @@ int process_and_check_message4( u8 *Kas, u16 Kas_len,
 
     // Parse message 4
     // Unwrapping message4
-    u16 tounwrap_len = message4_len;  
+    u16 tounwrap_len = message4_len;
     tounwrap = message4;
     unwrapped = malloc(tounwrap_len-8);
-    printf("antes del unwrapped\n");
     u16 unwrapped_len = hmac_unwrap(Kas, tounwrap, tounwrap_len, unwrapped);
-    printf("despues del unwrapped\n");
     if (unwrapped_len <= 0){
-    	printf("Error in hmac_unwrap!\n");
-	fflush(stdout);
         free (unwrapped);
         return 0;
     }
 
-    
+
     u16 pos4 = 0;
     // Getting id_A
     u8 *id_A = NULL;
-    printf("get payload id A\n");
     u16 id_A_len = get_payload(unwrapped,&pos4, &id_A);
-    printf("get payload id A 2\n");
     // Getting id_B
     u8 *id_B = NULL;
     u16 id_B_len = get_payload(unwrapped,&pos4, &id_B);
@@ -1154,10 +1077,10 @@ int process_and_check_message4( u8 *Kas, u16 Kas_len,
     u16 Na_len = get_payload(unwrapped,&pos4, &Na);
     // Getting Nb
     u8 *Nb = NULL;
-    u16 Nb_len = get_payload(unwrapped,&pos4, &Nb);    
+    u16 Nb_len = get_payload(unwrapped,&pos4, &Nb);
     // Getting Ns
     u8 *Ns = NULL;
-    u16 Ns_len = get_payload(unwrapped,&pos4, &Ns);    
+    u16 Ns_len = get_payload(unwrapped,&pos4, &Ns);
     // Getting LKab
     u32 temp_LKab, LKab;
     u8 *temp = NULL;
@@ -1179,53 +1102,21 @@ int process_and_check_message4( u8 *Kas, u16 Kas_len,
     memcpy(index_seq,Nb,Nb_len);
     index_seq+=Nb_len;
     memcpy(index_seq,Ns,Ns_len);
-//	printf("LLAMANDO A PRF PLUS\n");
     PRF_plus(4,Ksmk,Ksmk_len,sequence,sequence_len,key_derived);
-//	printf("SALIENDO A PRF PLUS\n");
     u16 Kab_len = 64;
     memcpy(Kab, key_derived,Kab_len);
-    printf("KEY DERIVED\n");
     print_hex(Kab,Kab_len);
 
-/*
-
-    printf("  *** (PARSED FROM MESSAGE 4) ***\n");
-    printf("A:");
-    print_hex(id_A,id_A_len);    
-
-    printf("B:");
-    print_hex(id_B,id_B_len);
-
-    printf("Na:");
-    print_hex(Na,Na_len);
-
-    printf("Nb:");
-    print_hex(Nb,Nb_len);
-
-    printf("Ns:");
-    print_hex(Ns,Ns_len);
-
-    printf("LKab:\n%u (decimal)\n",LKab);
-*/
-    // Free unwrapping buffers
-    printf("LIBRERANDO BUFFERS...\n");
-    fflush(stdout);
     free (unwrapped);
-    printf("SALIENDO LIBRERANDO BUFFERS...\n");
-    fflush(stdout);
 
-  /*  printf("  *** (CHECK ISSUES) ***\n");
-    printf("Checking if Na matches....");*/
     // Check if the received nonces are equal to the originals
     if (memcmp(Na,Na_orig,Na_len)!=0){
-        printf("ERROR: Nonces doesn't match!\n");
-        // Return failure        
+        // Return failure
         return 0;
     }
-    //printf("OK!\n");
 
     // Store the LKab lifetime
-    *LKab_ptr = LKab;   
+    *LKab_ptr = LKab;
 
     // Return success
     return 1;
@@ -1238,11 +1129,11 @@ int process_and_check_message4( u8 *Kas, u16 Kas_len,
  * Returns: message1 length.
  */
 u16 build_message1_extended( u8 *Kas,  u16 Kas_len,
-                    u8 *id_A, u16 id_A_len, 
+                    u8 *id_A, u16 id_A_len,
                     u8 *id_B, u16 id_B_len,
 					u8 *id_S2, u16 id_S2_len,
                     u8 *Na  , u16 Na_len,
-                    u32 SEQas, 
+                    u32 SEQas,
                     u8 **message1_ptr)
                 {
     u8 *towrap=NULL;
@@ -1251,26 +1142,25 @@ u16 build_message1_extended( u8 *Kas,  u16 Kas_len,
     // Buffers for wrapping
     towrap = malloc(Na_len + 4 + id_S2_len + 6);
     wrapped = malloc(Na_len + 4 + id_S2_len + 6 + 32);
-   
+
     // Build the message 1
     u32 temp_seq = htonl(SEQas);
-    
-    u16 towrap_len = 0; 
+
+    u16 towrap_len = 0;
     towrap_len = add_payload(towrap, towrap_len, Na             , Na_len  );
     towrap_len = add_payload(towrap, towrap_len,(u8*) &temp_seq , 4       );
     towrap_len = add_payload(towrap, towrap_len, id_S2           , id_S2_len   );
- 
+
     u16 wrapped_len = hmac_wrap(Kas, towrap, towrap_len, wrapped);
-    
+
     if (wrapped_len <= 0){
         free (towrap);
         free (wrapped);
-        printf("Error in hmac_wrap!\n");
-        return 0; 
+        return 0;
     }
 
     u8 *message1 = malloc( id_A_len + id_B_len  + wrapped_len + 6 );
-    
+
     u16 message1_len = 0;
     message1_len = add_payload(message1, message1_len, id_A   , id_A_len    );
     message1_len = add_payload(message1, message1_len, id_B   , id_B_len    );
@@ -1289,7 +1179,7 @@ u16 build_message1_extended( u8 *Kas,  u16 Kas_len,
  */
 u16 build_message2_extended( u8 *Kbl, u16 Kbl_len,
                     u8 *Nb, u16 Nb_len,
-                    u8 *message1, u16 message1_len, 
+                    u8 *message1, u16 message1_len,
                     u8 **message2_ptr)
                 { // TO BE EXECUTED IN B
     u8 *towrap=NULL;
@@ -1298,7 +1188,7 @@ u16 build_message2_extended( u8 *Kbl, u16 Kbl_len,
     // Extract id_A from message 1
     u16 message1_pos = 0;
     u8 *id_A = NULL;
-    u16 id_A_len = get_payload(message1, &message1_pos, &id_A); 
+    u16 id_A_len = get_payload(message1, &message1_pos, &id_A);
     u8 *id_B =NULL;
     u16 id_B_len = get_payload(message1, &message1_pos, &id_B);
     // Buffers for wrapping
@@ -1314,7 +1204,6 @@ u16 build_message2_extended( u8 *Kbl, u16 Kbl_len,
     if (wrapped_len <= 0){
         free (towrap);
         free (wrapped);
-        printf("Error in hmac_wrap!\n");
         return 0;
     }
 
@@ -1371,7 +1260,6 @@ void build_message3_extended(u8 *Kls, u16 Kls_len,
     if (unwrapped_len <= 0){
        	free (tounwrap);
        	free (unwrapped);
-       	printf("Error in hmac_unwrap!\n");
 	return;
     }
     u16 pos = 0;
@@ -1385,21 +1273,20 @@ void build_message3_extended(u8 *Kls, u16 Kls_len,
     // Free unwrapping buffers
     free (tounwrap);
     free (unwrapped);
-                       	
-    
+
+
     // Buffers for wrapping
     towrap = malloc(Nl_len + id_A_len + 4);
     wrapped = malloc(Nl_len + id_A_len + 4 + 32);
-    
+
     u16 towrap_len = 0;
     towrap_len = add_payload(towrap, towrap_len, Nl , Nl_len  );
     towrap_len = add_payload(towrap, towrap_len, id_A , id_A_len  );
-    
+
     u16 wrapped_len = hmac_wrap(Kls, towrap, towrap_len, wrapped);
     if (wrapped_len <= 0){
         free (towrap);
         free (wrapped);
-        printf("Error in hmac_wrap! TOMA\n");
         return 0;
     }
     u8 *message3 = malloc(id_L_len + wrapped_len + 4);
@@ -1414,7 +1301,7 @@ void build_message3_extended(u8 *Kls, u16 Kls_len,
     *message4_len = add_payload(message4, *message4_len, id_A, id_A_len);
     *message4_len = add_payload(message4, *message4_len, wrapped_m1 , wrapped_m1_len);
     *message4_ptr = message4;
-    
+
 }
 
 void build_message4_extended(u8 *Kas, u16 Kas_len,
@@ -1439,7 +1326,6 @@ void build_message4_extended(u8 *Kas, u16 Kas_len,
 	if (unwrapped_len <= 0){
 	   free (tounwrap);
 	   free (unwrapped);
-	   printf("Error in hmac_unwrap!\n");
 	   *message5_len = 0;
 	   *message6_len = 0;
 	   return;
@@ -1449,7 +1335,7 @@ void build_message4_extended(u8 *Kas, u16 Kas_len,
 	 u16 Nl_len = get_payload(unwrapped,&pos, &Nl);
 	 u8 *id_A_wrapped = NULL;
 	 u16 id_A_wrapped_len = get_payload(unwrapped,&pos, &id_A_wrapped);
-	
+
 	 // Free unwrapping buffers
 	 free (tounwrap);
 	 free (unwrapped);
@@ -1457,14 +1343,13 @@ void build_message4_extended(u8 *Kas, u16 Kas_len,
 	//Unwrapping {Na,SEQAS,L}Kas
 	u16 message4_pos =0;
 	u8 *id_A = NULL;
-	u16 id_A_len = get_payload(message4,&message4_pos, &id_A);	
+	u16 id_A_len = get_payload(message4,&message4_pos, &id_A);
 	tounwrap_len = get_payload(message4, &message4_pos, &tounwrap);
 	unwrapped = malloc(tounwrap_len-8);
 	unwrapped_len= hmac_unwrap(Kas,tounwrap, tounwrap_len, unwrapped);
 	if(unwrapped_len <= 0) {
 		free(tounwrap);
 		free(unwrapped);
-		printf("Error in hmac_unwrap!\n");
 		*message5_len =0;
 		*message6_len =0;
 		return;
@@ -1472,13 +1357,13 @@ void build_message4_extended(u8 *Kas, u16 Kas_len,
 	pos =0;
 	u8 *Na = NULL;
 	u16 Na_len = get_payload(unwrapped, &pos, &Na);
-	
+
 	//derive key
 	u8 *key = (u8 *) malloc(80*sizeof(u8));
 	u16 sequence_len = id_A_len + id_L_len + Na_len + Nl_len + Ns_len;
 	u8 * sequence = malloc(sequence_len * sizeof(u8));
 	u8 * index = sequence;
-	
+
 	memcpy(index, id_A, id_A_len);
 	index += id_A_len;
 	memcpy(index, id_L, id_L_len);
@@ -1488,16 +1373,16 @@ void build_message4_extended(u8 *Kas, u16 Kas_len,
 	memcpy(index, Nl, Nl_len);
 	index += Nl_len;
 	memcpy(index, Ns, Ns_len);
-	index += Ns_len;	
-	
+	index += Ns_len;
+
 	PRF_plus(4,SMKas,64,sequence,sequence_len,key);
-	
+
 	u8 *Kal = malloc(64*sizeof(u8));
 	memcpy(Kal,key, 64);
 	u16 Kal_len = 64;
-	
+
 	free(key);
-		
+
 	//format messages
 	u8 * towrap5 = malloc (id_A_wrapped_len + id_L_len + Na_len + Nl_len + Ns_len + 10);
 	u8 * wrapped5 =  malloc (id_A_wrapped_len + id_L_len + Na_len + Nl_len + Ns_len + 10 + 32);
@@ -1507,13 +1392,12 @@ void build_message4_extended(u8 *Kas, u16 Kas_len,
 	towrap5_len = add_payload(towrap5, towrap5_len, Na, Na_len);
 	towrap5_len = add_payload(towrap5, towrap5_len, Nl, Nl_len);
 	towrap5_len = add_payload(towrap5, towrap5_len, Ns, Ns_len);
-	
+
 	u16 wrapped5_len = hmac_wrap(Kas, towrap5, towrap5_len, wrapped5);
 
     	if (wrapped5_len <= 0){
         	free (towrap5);
 	        free (wrapped5);
-        	printf("Error in hmac_wrap!\n");
 	        return 0;
     	}
 
@@ -1532,16 +1416,15 @@ void build_message4_extended(u8 *Kas, u16 Kas_len,
     if (wrapped6_len <= 0){
         free (towrap6);
         free (wrapped6);
-        printf("Error in hmac_wrap!\n");
         return 0;
     }
 
 	*message5_ptr  = wrapped5;
 	*message5_len = wrapped5_len;
-	
+
 	*message6_ptr = wrapped6;
 	*message6_len = wrapped6_len;
-	 
+
 }
 
 void build_message5_extended (u8 * Kls, u16 Kls_len,
@@ -1560,11 +1443,10 @@ void build_message5_extended (u8 * Kls, u16 Kls_len,
 	u8 *unwrapped = NULL;
 	unwrapped = malloc(tounwrap_len-8);
 	u16 unwrapped_len = hmac_unwrap(Kls, tounwrap, tounwrap_len, unwrapped);
-	
+
 	if (unwrapped_len <= 0){
 	   free (tounwrap);
 	   free (unwrapped);
-	   printf("Error in hmac_unwrap!\n");
 	   *message7_len = 0;
 	   *message8_len = 0;
 	   return;
@@ -1582,16 +1464,16 @@ void build_message5_extended (u8 * Kls, u16 Kls_len,
 	u16 Ns_len = get_payload(unwrapped,&pos, &Ns);
 	u8 *Kal = NULL;
 	u16 Kal_len = get_payload(unwrapped,&pos, &Kal);
-	
+
 	//Derive K2al  with Kal
-	
+
 	//para K2ab  nonces Na, Nb, Nll
 	//para Kal nonces Na, Nl, Ns
 	u8 *key = (u8 *) malloc(80*sizeof(u8));
 	u16 sequence_len = id_A_len + id_L_len + Na_len + Nl_len + Ns_len;
 	u8 * sequence = malloc(sequence_len * sizeof(u8));
 	u8 * index = sequence;
-	
+
 	memcpy(index, id_A, id_A_len);
 	index += id_A_len;
 	memcpy(index, id_L, id_L_len);
@@ -1601,22 +1483,22 @@ void build_message5_extended (u8 * Kls, u16 Kls_len,
 	memcpy(index, Nl, Nl_len);
 	index += Nl_len;
 	memcpy(index, Ns, Ns_len);
-	index += Ns_len;	
-	
+	index += Ns_len;
+
 	PRF_plus(4,Kal,64,sequence,sequence_len,key);
-	
+
 	u8 *K2al = malloc(64*sizeof(u8));
 	memcpy(K2al,key, 64);
 	u16 K2al_len = 64;
-	
+
 	free(key);
 	free(sequence);
-	
+
 	key = (u8 *) malloc(80*sizeof(u8));
 	sequence_len = id_A_len + id_B_len + Na_len + Nb_len + Nll_len;
 	sequence = malloc(sequence_len * sizeof(u8));
 	index = sequence;
-	
+
 	memcpy(index, id_A, id_A_len);
 	index += id_A_len;
 	memcpy(index, id_B, id_B_len);
@@ -1626,20 +1508,20 @@ void build_message5_extended (u8 * Kls, u16 Kls_len,
 	memcpy(index, Nb, Nb_len);
 	index += Nb_len;
 	memcpy(index, Nll, Nll_len);
-	index += Nll_len;	
-	
+	index += Nll_len;
+
 	PRF_plus(4,Kal,64,sequence,sequence_len,key);
-	
+
 	u8 *K2ab = malloc(64*sizeof(u8));
 	memcpy(K2ab,key, 64);
 	u16 K2ab_len = 64;
-	
+
 	free(key);
-	
-	
+
+
 	//format messages
 	u32 temp_seq = htonl(SEQal);
-	
+
 	u8 * towrap7 = malloc (id_A_len + id_B_len + Na_len + Nb_len + Nll_len + 4 + 12);
     u8 * wrapped7 =  malloc (id_A_len + id_B_len + Na_len + Nb_len + Nll_len + 4 + 12 + 32);
     u16 towrap7_len = 0;
@@ -1654,13 +1536,12 @@ void build_message5_extended (u8 * Kls, u16 Kls_len,
     if (wrapped7_len <= 0){
         free (towrap7);
         free (wrapped7);
-        printf("Error in hmac_wrap!\n");
         return 0;
     }
 
 	*message7_ptr  = wrapped7;
 	*message7_len = wrapped7_len;
-	
+
 	u8 * towrap8 = malloc (id_A_len + id_B_len + Na_len + Nb_len + Nll_len + K2ab_len + 12);
     u8 * wrapped8 =  malloc (id_A_len + id_B_len + Na_len + Nb_len + Nll_len + K2ab_len + 12 + 32);
     u16 towrap8_len = 0;
@@ -1676,7 +1557,6 @@ void build_message5_extended (u8 * Kls, u16 Kls_len,
     if (wrapped8_len <= 0){
         free (towrap8);
         free (wrapped8);
-        printf("Error in hmac_wrap!\n");
         return 0;
     }
 
@@ -1694,11 +1574,10 @@ void process_and_check_message6_extended(u8 * Kbl, u16 Kbl_len,
 	u8 *unwrapped = NULL;
 	unwrapped = malloc(tounwrap_len-8);
 	u16 unwrapped_len = hmac_unwrap(Kbl, tounwrap, tounwrap_len, unwrapped);
-	
+
 	if (unwrapped_len <= 0){
 	   free (tounwrap);
 	   free (unwrapped);
-	   printf("Error in hmac_unwrap!\n");	   
 	   return;
 	 }
     u16 pos = 0;
@@ -1714,7 +1593,7 @@ void process_and_check_message6_extended(u8 * Kbl, u16 Kbl_len,
 	u16 Nl_len = get_payload(unwrapped,&pos, &Nl);
 	u8 *Kab = NULL;
 	u16 Kab_len = get_payload(unwrapped,&pos, &Kab);
-	
+
 	*Kab_ptr = Kab;
     *Kab_len_ptr = Kab_len;
 }
@@ -1731,11 +1610,10 @@ void process_and_check_message7_extended( u8 * Kas, u16 Kas_len,
 	u8 *unwrapped = NULL;
 	unwrapped = malloc(tounwrap_len-8);
 	u16 unwrapped_len = hmac_unwrap(Kas, tounwrap, tounwrap_len, unwrapped);
-	
+
 	if (unwrapped_len <= 0){
 	   free (tounwrap);
 	   free (unwrapped);
-	   printf("Error in hmac_unwrap!\n");	   
 	   return;
 	 }
     u16 pos = 0;
@@ -1746,16 +1624,16 @@ void process_and_check_message7_extended( u8 * Kas, u16 Kas_len,
 	u8 *Na = NULL;
 	u16 Na_len = get_payload(unwrapped,&pos, &Na);
 	u8 *Nl = NULL;
-	u16 Nl_len = get_payload(unwrapped,&pos, &Nl);	
+	u16 Nl_len = get_payload(unwrapped,&pos, &Nl);
 	u8 *Ns = NULL;
 	u16 Ns_len = get_payload(unwrapped,&pos, &Ns);
-	
+
 	//Derive Kal
 	u8 *key = (u8 *) malloc(80*sizeof(u8));
 	u16 sequence_len = id_A_len + id_L_len + Na_len + Nl_len + Ns_len;
 	u8 * sequence = malloc(sequence_len * sizeof(u8));
 	u8 * index = sequence;
-	
+
 	memcpy(index, id_A, id_A_len);
 	index += id_A_len;
 	memcpy(index, id_L, id_L_len);
@@ -1765,24 +1643,24 @@ void process_and_check_message7_extended( u8 * Kas, u16 Kas_len,
 	memcpy(index, Nl, Nl_len);
 	index += Nl_len;
 	memcpy(index, Ns, Ns_len);
-	index += Ns_len;	
-	
+	index += Ns_len;
+
 	PRF_plus(4,SMKas,64,sequence,sequence_len,key);
-	
+
 	u8 *Kal = malloc(64*sizeof(u8));
 	memcpy(Kal,key, 64);
 	u16 Kal_len = 64;
-	
-	free(key);	
-	free(sequence);	
+
+	free(key);
+	free(sequence);
 	//Derive K2al
 	//Root key kal
-		
+
 	key = (u8 *) malloc(80*sizeof(u8));
 	sequence_len = id_A_len + id_L_len + Na_len + Nl_len + Ns_len;
 	sequence = malloc(sequence_len * sizeof(u8));
 	index = sequence;
-	
+
 	memcpy(index, id_A, id_A_len);
 	index += id_A_len;
 	memcpy(index, id_L, id_L_len);
@@ -1792,27 +1670,26 @@ void process_and_check_message7_extended( u8 * Kas, u16 Kas_len,
 	memcpy(index, Nl, Nl_len);
 	index += Nl_len;
 	memcpy(index, Ns, Ns_len);
-	index += Ns_len;	
-	
+	index += Ns_len;
+
 	PRF_plus(4,Kal,64,sequence,sequence_len,key);
-	
+
 	u8 *K2al = malloc(64*sizeof(u8));
 	memcpy(K2al,key, 64);
 	u16 K2al_len = 64;
-	
-	free(key);	
+
+	free(key);
 	free(sequence);
-	
+
 	tounwrap = message10;
 	tounwrap_len = message10_len;
 	unwrapped = NULL;
 	unwrapped = malloc(tounwrap_len-8);
 	unwrapped_len = hmac_unwrap(K2al, tounwrap, tounwrap_len, unwrapped);
-	
+
 	if (unwrapped_len <= 0){
 	   free (tounwrap);
 	   free (unwrapped);
-	   printf("Error in hmac_unwrap!\n");	   
 	   return;
 	 }
     	pos = 0;
@@ -1828,17 +1705,17 @@ void process_and_check_message7_extended( u8 * Kas, u16 Kas_len,
 	u16 Nll_len = get_payload(unwrapped,&pos, &Nll);
 	u32 *SEQal = NULL;
 	u16 SEQal_len = get_payload(unwrapped,&pos, &SEQal);
-	
+
 	SEQal = ntohl(SEQal);
-	
+
 	//Derive Kab
 	//Root key Kal Na Nb Nl
-	
+
 	key = (u8 *) malloc(80*sizeof(u8));
 	sequence_len = id_A_len + id_B_len + Na_len + Nb_len + Nll_len;
 	sequence = malloc(sequence_len * sizeof(u8));
 	index = sequence;
-	
+
 	memcpy(index, id_A, id_A_len);
 	index += id_A_len;
 	memcpy(index, id_B, id_B_len);
@@ -1848,19 +1725,19 @@ void process_and_check_message7_extended( u8 * Kas, u16 Kas_len,
 	memcpy(index, Nb, Nb_len);
 	index += Nb_len;
 	memcpy(index, Nll, Nll_len);
-	index += Nll_len;	
-	
+	index += Nll_len;
+
 	PRF_plus(4,Kal,64,sequence,sequence_len,key);
-	
+
 	u8 *K2ab = malloc(64*sizeof(u8));
 	memcpy(K2ab,key, 64);
 	u16 K2ab_len = 64;
-	
+
 	free(key);
-	
-	
+
+
 	*Kab_ptr = K2ab;
     	*Kab_len_ptr = K2ab_len;
-	
-	
+
+
 }
