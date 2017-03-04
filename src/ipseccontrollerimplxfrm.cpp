@@ -132,10 +132,6 @@ namespace openikev2 {
         }
         req;
 
-	    cout << "xfrmGetSpi()" << endl;	
-	    cout << "Origen="<< src.toStringTab(1) << endl;
-	    cout << "Destino="<< dst.toStringTab(1) << endl;
-	
         // sends the request
         memset( &req, 0, sizeof( req ) );
         req.n.nlmsg_flags = NLM_F_REQUEST;
@@ -146,7 +142,6 @@ namespace openikev2 {
 
         req.spi.info.reqid = reqid;
         req.spi.info.id.proto = ( protocol == Enums::PROTO_ESP ) ? IPPROTO_ESP : IPPROTO_AH;
-	//cout << "IPSEC protocol="<< req.spi.info.id.proto << endl;
         req.spi.info.family = UtilsImpl::getUnixFamily( src.getFamily() );
         req.spi.min = min;
         req.spi.max = max;
@@ -171,21 +166,16 @@ namespace openikev2 {
         }
         close( fd );
 
-        
-        
-        
+
+
+
         uint32_t ipsec_spi = ntohl( res.sa.id.spi );
         // Commented by Pedro J. Fernandez in order to avoid larval deletion
         //this->xfrmDeleteIpsecSa( src, dst, protocol, ipsec_spi );
 
-	    //ipsec_proto = res.sa.id.proto ;
-	    //uint8_t ipsec_mode = res.sa.mode;
-		
-	//cout << "IPSEC protocol devuelto="<< ipsec_proto << endl;
-	//printf ("IPSEC mode devuelto=%d\n",ipsec_mode);
-        //printf("SPI devuelto=%u\n", ipsec_spi);
-	//uint8_t *spi_char = (uint8_t *) &ipsec_spi;
-        //printf("SPI=%.2X:%.2X:%.2X:%.2X\n", spi_char[0],spi_char[1],spi_char[2],spi_char[3]);
+        //ipsec_proto = res.sa.id.proto ;
+        //uint8_t ipsec_mode = res.sa.mode;
+
         return ipsec_spi;
     }
 
@@ -203,16 +193,6 @@ namespace openikev2 {
             char buf[ XFRM_ALGO_KEY_BUF_SIZE ];
         }
         alg;
-
-        cout << "xfrmAddUpdateIpsecSa()" << endl;	
-        cout << "Operacion="<< operation << endl;
-        cout << "Origen="<< src.toStringTab(1) << endl;
-        cout << "Destino="<< dst.toStringTab(1) << endl;
-        cout << "Selector Origen ="<< src_sel.toStringTab(1) << endl;
-        cout << "Selector Destino="<< dst_sel.toStringTab(1) << endl;
-        cout << "IPSEC proto:" << protocol << endl;
-        cout << "IPSEC mode:" << mode << endl;
-	
 
         memset( &req, 0, sizeof( req ) );
         memset( &alg, 0, sizeof( alg ) );
@@ -239,7 +219,6 @@ namespace openikev2 {
 
         // SET THE MODE
         req.xsinfo.mode = ( mode == Enums::TRANSPORT_MODE ) ? XFRM_MODE_TRANSPORT : XFRM_MODE_TUNNEL;
-	//printf ("IPSEC mode=%X\n",req.xsinfo.mode);
 
         // If tunnel mode, the SRC and DST address are obtained from the src and dst parameters
         if ( mode == Enums::TUNNEL_MODE ) {
@@ -257,11 +236,10 @@ namespace openikev2 {
 
         // writes SPI
         req.xsinfo.id.spi = htonl( spi );
-	uint8_t *spi_char = (uint8_t *)&spi;
-	
-	printf("SPI=%.2X:%.2X:%.2X:%.2X\n", spi_char[0],spi_char[1],spi_char[2],spi_char[3]);
+        uint8_t *spi_char = (uint8_t *)&spi;
+
         req.xsinfo.id.proto = ( protocol == Enums::PROTO_ESP ) ? IPPROTO_ESP : IPPROTO_AH;
-	//cout << "IPSEC protocol="<< req.xsinfo.id.proto << endl;
+
         // Set the ENCR algo
         if ( encr_key.size() > 0 ) {
             strncpy( alg.alg.alg_name, encr_type.c_str(), 64 );
@@ -284,8 +262,6 @@ namespace openikev2 {
         netlinkSendMsg( fd, req.n );
 
         if ( int error = netlinkReceiveAck( fd ) != 0 ) {
-            cout << "Error al actualizar la SA: " << error << endl;      
-      	    
             close( fd );
             throw IpsecException( "Error performing an UPDATE/ADD action" );
         }
@@ -301,15 +277,6 @@ namespace openikev2 {
             char buf[ RTA_BUF_SIZE ];
         }
         req;
-
-	cout << "xfrmCreateIpsecPolicy()" << endl;	
-	cout << "Selector Origen ="<< src_sel.toStringTab(1) << " Prefixlen=" << src_prefixlen <<  " Puerto:" << src_port << endl;
-	cout << "Selector Destino="<< dst_sel.toStringTab(1) << " Prefixlen=" << dst_prefixlen <<  " Puerto:" << dst_port << endl;
-        cout << "IP proto:" << ip_protocol << endl;
-        cout << "Dir:" << dir << endl;
-        cout << "IPSEC proto:" << protocol << endl;
-        cout << "IPSEC mode:" << mode << endl;
-        cout << "IP proto:" << ip_protocol << endl;
 
         memset( &req, 0, sizeof( req ) );
 
@@ -358,7 +325,7 @@ namespace openikev2 {
 
         if (sub)
             req.ptype.type = XFRM_POLICY_TYPE_SUB;
-        else 
+        else
             req.ptype.type = XFRM_POLICY_TYPE_MAIN;
 
         ByteArray temp2( &(req.ptype) , sizeof( struct xfrm_userpolicy_type ), sizeof( struct xfrm_userpolicy_type ) );
@@ -393,37 +360,31 @@ namespace openikev2 {
 
         int32_t fd = netlinkOpen( 0, NETLINK_XFRM );
         netlinkSendMsg( fd, req.n );
-        
-        int mierror = netlinkReceiveAck( fd );
-        if ( mierror != 0 ) {
-            if (mierror != -17) {
-                printf("%d\n",mierror);
+
+        int myerror = netlinkReceiveAck( fd );
+        if ( myerror != 0 ) {
+            if (myerror != -17) {
                 close( fd );
                 throw IpsecException( "Error performing an CREATE POLICY action" );
             }
         }
 
         close( fd );
-        
 
-	if (autogen && protocol != Enums::PROTO_NONE ){
-            // Si la politica es modo tunel y tiene las direcciones de tunel asignadas, 
+
+        if (autogen && protocol != Enums::PROTO_NONE ){
+            // Si la politica es modo tunel y tiene las direcciones de tunel asignadas,
             if ((mode == Enums::TUNNEL_MODE && tunnel_src != NULL && tunnel_dst != NULL)){
-
-	        //cout << "\nVoy a autocrear la SA\n";
-
                 // Estos valores de puerto son un ejemplo porque hay que poner alguno
-		processAcquire( *tunnel_src, ((tunnel_src->getFamily() == Enums::ADDR_IPV6) ? 128: 32), 1025, *tunnel_dst, ((tunnel_dst->getFamily() == Enums::ADDR_IPV6) ? 128: 32), 1025, ip_protocol, dir, protocol, mode, priority, src_sel, src_prefixlen, src_port, dst_sel, dst_prefixlen, dst_port, tunnel_src, tunnel_dst );
+                processAcquire( *tunnel_src, ((tunnel_src->getFamily() == Enums::ADDR_IPV6) ? 128: 32), 1025, *tunnel_dst, ((tunnel_dst->getFamily() == Enums::ADDR_IPV6) ? 128: 32), 1025, ip_protocol, dir, protocol, mode, priority, src_sel, src_prefixlen, src_port, dst_sel, dst_prefixlen, dst_port, tunnel_src, tunnel_dst );
             }
-            //Si la politica es modo transporte y los selectores tienen mascara 32 o 128 
+            //Si la politica es modo transporte y los selectores tienen mascara 32 o 128
             else if ((mode == Enums::TRANSPORT_MODE && ((src_sel.getFamily() == Enums::ADDR_IPV6)? src_prefixlen == 128 : src_prefixlen == 32 ) && ((dst_sel.getFamily() == Enums::ADDR_IPV6)? dst_prefixlen == 128 : dst_prefixlen == 32 ))) {
-            
                 // Estos valores de puerto son un ejemplo porque hay que poner alguno
-		processAcquire( src_sel, src_prefixlen, 1025, dst_sel, dst_prefixlen, 1025, ip_protocol, dir, protocol, mode, priority, src_sel, src_prefixlen, src_port, dst_sel, dst_prefixlen, dst_port, tunnel_src, tunnel_dst );
-
+                processAcquire( src_sel, src_prefixlen, 1025, dst_sel, dst_prefixlen, 1025, ip_protocol, dir, protocol, mode, priority, src_sel, src_prefixlen, src_port, dst_sel, dst_prefixlen, dst_port, tunnel_src, tunnel_dst );
             }
-//		processAcquire( src_sel, src_prefixlen, src_port, dst_sel, dst_prefixlen, dst_port, ip_protocol, dir, protocol, mode, priority, tunnel_src, tunnel_dst );
-	}
+    //      processAcquire( src_sel, src_prefixlen, src_port, dst_sel, dst_prefixlen, dst_port, ip_protocol, dir, protocol, mode, priority, tunnel_src, tunnel_dst );
+        }
 
     }
 
@@ -514,13 +475,13 @@ namespace openikev2 {
     void IpsecControllerImplXfrm::processAcquire( const IpAddress & src_sel, uint8_t src_prefixlen, uint16_t src_port, const IpAddress & dst_sel, uint8_t dst_prefixlen, uint16_t dst_port, uint8_t ip_protocol, Enums::DIRECTION dir, Enums::PROTOCOL_ID protocol, Enums::IPSEC_MODE mode, uint32_t priority, const IpAddress & src_policy_sel, uint8_t src_policy_prefixlen, uint16_t src_policy_port, const IpAddress & dst_policy_sel, uint8_t dst_policy_prefixlen, uint16_t dst_policy_port, const IpAddress * tunnel_src, const IpAddress * tunnel_dst ){
 
 
-	auto_ptr<IpAddress> src ( src_sel.clone() );
+    auto_ptr<IpAddress> src ( src_sel.clone() );
         auto_ptr<IpAddress> dst( dst_sel.clone() );
-	auto_ptr<IpAddress> src_selector ( src_sel.clone() );
+    auto_ptr<IpAddress> src_selector ( src_sel.clone() );
         auto_ptr<IpAddress> dst_selector ( dst_sel.clone() );
-	auto_ptr<IpAddress> src_policy_addr ( src_policy_sel.clone() );
+    auto_ptr<IpAddress> src_policy_addr ( src_policy_sel.clone() );
         auto_ptr<IpAddress> dst_policy_addr ( dst_policy_sel.clone() );
-	
+
 
         uint8_t src_sel_prefixlen = src_prefixlen;
         uint8_t dst_sel_prefixlen = dst_prefixlen;
@@ -571,16 +532,16 @@ namespace openikev2 {
                                                                         auto_ptr<Payload_TS> ( payload_ts_r )
                                                                       )
                                                   );
-	Log::writeMessage( "IpsecController", "IP_PROTO="+ intToString( sel_ip_proto )+"["+intToString( Enums::IP_PROTO_ICMPv6 )+"]", Log::LOG_IPSC, false );
-	Log::writeMessage( "IpsecController", "SRC_PORT="+ intToString( src_sel_port )+"[146 o 147]", Log::LOG_IPSC, false );
-	/*	
-	if (sel_ip_proto == Enums::IP_PROTO_MH || ( (sel_ip_proto == Enums::IP_PROTO_ICMPv6) && (src_sel_port == 146 || src_sel_port == 147 ))){ // Case of MIPv6 signaling		
-		auto_ptr<IpAddress> src2 (NetworkController::getCurrentCoA());		
-		//auto_ptr<IpAddress> src2 ( new IpAddressOpenIKE("2001:155:54:92:2c0:caff:fe47:16ba") );	
+    Log::writeMessage( "IpsecController", "IP_PROTO="+ intToString( sel_ip_proto )+"["+intToString( Enums::IP_PROTO_ICMPv6 )+"]", Log::LOG_IPSC, false );
+    Log::writeMessage( "IpsecController", "SRC_PORT="+ intToString( src_sel_port )+"[146 o 147]", Log::LOG_IPSC, false );
+    /*
+    if (sel_ip_proto == Enums::IP_PROTO_MH || ( (sel_ip_proto == Enums::IP_PROTO_ICMPv6) && (src_sel_port == 146 || src_sel_port == 147 ))){ // Case of MIPv6 signaling
+        auto_ptr<IpAddress> src2 (NetworkController::getCurrentCoA());
+        //auto_ptr<IpAddress> src2 ( new IpAddressOpenIKE("2001:155:54:92:2c0:caff:fe47:16ba") );
 
-		src = src2;
-		Log::writeMessage( "IpsecController", Printable::generateTabs( 1 ) + "COA=[" + src->toString() + "]", Log::LOG_IPSC, false );
-	}
+        src = src2;
+        Log::writeMessage( "IpsecController", Printable::generateTabs( 1 ) + "COA=[" + src->toString() + "]", Log::LOG_IPSC, false );
+    }
 */
         IkeSaController::requestChildSa( *src, *dst, child_sa_request );
 
@@ -588,8 +549,8 @@ namespace openikev2 {
 
     void IpsecControllerImplXfrm::processAcquire( const nlmsghdr & n ) {
         xfrm_user_acquire * acquire = ( xfrm_user_acquire* ) NLMSG_DATA( &n );
-	
-	    NetworkController::refreshInterfaces();
+
+        NetworkController::refreshInterfaces();
 
         // BY NOW, ALL THE POLICY SHOULD BE IPv6 or IPv4
         Enums::ADDR_FAMILY family = UtilsImpl::getInternalFamily( acquire->policy.sel.family );
@@ -615,7 +576,7 @@ namespace openikev2 {
             Log::writeMessage( "IpsecController", "Recv acquire: Policy=[" + intToString( policy.id ) + "] but this policy is SUB. Skipping...", Log::LOG_IPSC, true );
             Log::release();
 
-        } 
+        }
 
         Log::acquire();
         Log::writeMessage( "IpsecController", "Recv acquire: Policy=[" + intToString( policy.id ) + "]", Log::LOG_IPSC, true );
@@ -647,7 +608,7 @@ namespace openikev2 {
         payload_ts_i->addTrafficSelector( policy.getSrcTrafficSelector() );
         payload_ts_r->addTrafficSelector( policy.getDstTrafficSelector() );
 
-        auto_ptr<ChildSaRequest> child_sa_request ( new ChildSaRequest( 
+        auto_ptr<ChildSaRequest> child_sa_request ( new ChildSaRequest(
                                                                         policy.sa_request->ipsec_protocol,
                                                                         policy.sa_request->mode,
                                                                         auto_ptr<Payload_TS> ( payload_ts_i ),
@@ -655,51 +616,51 @@ namespace openikev2 {
                                                                       )
                                                   );
 
-	/*
-	Log::writeMessage( "IpsecController", "IP_PROTO="+ intToString( sel_ip_proto )+"["+intToString( Enums::IP_PROTO_ICMPv6 )+"]", Log::LOG_IPSC, false );
+    /*
+    Log::writeMessage( "IpsecController", "IP_PROTO="+ intToString( sel_ip_proto )+"["+intToString( Enums::IP_PROTO_ICMPv6 )+"]", Log::LOG_IPSC, false );
         Log::writeMessage( "IpsecController", "SRC_PORT="+ intToString( src_sel_port )+"[146 o 147]", Log::LOG_IPSC, false );
         */
 
-	auto_ptr<GeneralConfiguration> general_conf = Configuration::getInstance().getGeneralConfiguration();
-	BoolAttribute* mobility_attr = general_conf->attributemap->getAttribute<BoolAttribute>( "mobility" );
-	bool mobility = false;
-	if (mobility_attr  != NULL )
-		mobility = mobility_attr->value;
-	if ( mobility ) {
+    auto_ptr<GeneralConfiguration> general_conf = Configuration::getInstance().getGeneralConfiguration();
+    BoolAttribute* mobility_attr = general_conf->attributemap->getAttribute<BoolAttribute>( "mobility" );
+    bool mobility = false;
+    if (mobility_attr  != NULL )
+        mobility = mobility_attr->value;
+    if ( mobility ) {
 
 
-		BoolAttribute* is_ha_attr = general_conf->attributemap->getAttribute<BoolAttribute>( "is_ha" );
-            	bool is_ha = false;
+        BoolAttribute* is_ha_attr = general_conf->attributemap->getAttribute<BoolAttribute>( "is_ha" );
+                bool is_ha = false;
                     if (is_ha_attr  != NULL )
-                is_ha = is_ha_attr->value;  
+                is_ha = is_ha_attr->value;
 
 
-		if (sel_ip_proto == Enums::IP_PROTO_MH ){ //&& !( (sel_ip_proto == Enums::IP_PROTO_ICMPv6) && (src_sel_port == 146 || src_sel_port == 147 ))){               		
-			auto_ptr<IpAddress> coa (NetworkController::getCurrentCoA());		
-			//auto_ptr<IpAddress> src2 ( new IpAddressOpenIKE("2001:155:54:92:2c0:caff:fe47:16ba") );	
+        if (sel_ip_proto == Enums::IP_PROTO_MH ){ //&& !( (sel_ip_proto == Enums::IP_PROTO_ICMPv6) && (src_sel_port == 146 || src_sel_port == 147 ))){
+            auto_ptr<IpAddress> coa (NetworkController::getCurrentCoA());
+            //auto_ptr<IpAddress> src2 ( new IpAddressOpenIKE("2001:155:54:92:2c0:caff:fe47:16ba") );
 
-			Log::writeMessage( "IpsecController", Printable::generateTabs( 1 ) + "Using COA=[" + coa->toString() + "] instead of HoA for IKE_SA creation based on CoA", Log::LOG_IPSC, false );
-		
-		        IkeSaController::requestChildSaMobility( *src, *dst, child_sa_request, *coa, is_ha );
+            Log::writeMessage( "IpsecController", Printable::generateTabs( 1 ) + "Using COA=[" + coa->toString() + "] instead of HoA for IKE_SA creation based on CoA", Log::LOG_IPSC, false );
 
-		}
-		else {
-			if (is_ha){
-				Log::writeMessage( "IpsecController", Printable::generateTabs( 1 ) + "(IS HA) Using COA2=[" + dst->toString() + "]", Log::LOG_IPSC, false );			
-				IkeSaController::requestChildSaMobility( *src, *dst, child_sa_request, *dst  , is_ha ); 
-			}
-			else {
-				Log::writeMessage( "IpsecController", Printable::generateTabs( 1 ) + "(IS MR) Using COA2=[" + src->toString() + "]", Log::LOG_IPSC, false );			
-				IkeSaController::requestChildSaMobility( *src, *dst, child_sa_request, *src  , is_ha ); 
-			
-			}
-		}	
-        
+                IkeSaController::requestChildSaMobility( *src, *dst, child_sa_request, *coa, is_ha );
 
-	}
-	else {
-        	IkeSaController::requestChildSa( *src, *dst, child_sa_request ); 
-    	}
+        }
+        else {
+            if (is_ha){
+                Log::writeMessage( "IpsecController", Printable::generateTabs( 1 ) + "(IS HA) Using COA2=[" + dst->toString() + "]", Log::LOG_IPSC, false );
+                IkeSaController::requestChildSaMobility( *src, *dst, child_sa_request, *dst  , is_ha );
+            }
+            else {
+                Log::writeMessage( "IpsecController", Printable::generateTabs( 1 ) + "(IS MR) Using COA2=[" + src->toString() + "]", Log::LOG_IPSC, false );
+                IkeSaController::requestChildSaMobility( *src, *dst, child_sa_request, *src  , is_ha );
+
+            }
+        }
+
+
+    }
+    else {
+            IkeSaController::requestChildSa( *src, *dst, child_sa_request );
+        }
     }
 
     void IpsecControllerImplXfrm::processExpire( const nlmsghdr & n ) {
@@ -836,14 +797,14 @@ namespace openikev2 {
                 for ( uint16_t i = 0; i < ntb; i++ ) {
                     if ( tb[ i ] ->rta_type == XFRMA_POLICY_TYPE ){
                          xfrm_userpolicy_type* policy_type = ( xfrm_userpolicy_type* ) RTA_DATA( tb[ i ] );
-                         
+
                         if (policy_type->type == XFRM_POLICY_TYPE_MAIN)
                             policy->type = Enums::POLICY_MAIN;
                         else if (policy_type->type == XFRM_POLICY_TYPE_SUB)
                             policy->type = Enums::POLICY_SUB;
                         else
                             policy->type = Enums::POLICY_MAIN;
-                        
+
                     }
 
                     if ( tb[ i ] ->rta_type != XFRMA_TMPL )
@@ -911,7 +872,7 @@ namespace openikev2 {
         assert ( !childsa.peer_traffic_selector->getTrafficSelectors().empty() );
 
         Log::writeLockedMessage( "IpsecController", "IPsec tunnel creation (outbound)", Log::LOG_INFO, true );
-		
+
         // creates the outbound IPsec SA
         this->xfrmAddUpdateIpsecSa(
             (XFRM_MSG_NEWSA),
@@ -934,60 +895,60 @@ namespace openikev2 {
 
         // Creates the inbound IPsec SA
         Log::writeLockedMessage( "IpsecController", "IPsec tunnel update (inbound)", Log::LOG_INFO, true );
-	
-	
-	try {        
-		this->xfrmAddUpdateIpsecSa(
-		    (XFRM_MSG_UPDSA),
-		    dst,
-		    src,
-		    childsa.ipsec_protocol,
-		    childsa.mode,
-		    childsa.inbound_spi,
-		    getXfrmEncrAlgo( childsa.getProposal().getFirstTransformByType( Enums::ENCR ) ),
-		    ( childsa.child_sa_initiator ) ? *childsa.keyring->sk_er : *childsa.keyring->sk_ei,
-		    getXfrmIntegAlgo( childsa.getProposal().getFirstTransformByType( Enums::INTEG ) ),
-		    ( childsa.child_sa_initiator ) ? *childsa.keyring->sk_ar : *childsa.keyring->sk_ai,
-		    childsa.getChildSaConfiguration().lifetime_soft,
-		    childsa.getChildSaConfiguration().lifetime_hard,
-		    childsa.getChildSaConfiguration().max_bytes_hard,
-		    0,
-		    *childsa.peer_traffic_selector->getTrafficSelectors().front(),
-		    *childsa.my_traffic_selector->getTrafficSelectors().front()
-		);
-	}catch(IpsecException & ex) {
-        	
 
-		try {
-			Log::writeLockedMessage( "IpsecController", "IPsec tunnel update fails, deleting it (inbound)", Log::LOG_WARN, true );
-			this->xfrmDeleteIpsecSa( dst, src, childsa.ipsec_protocol, childsa.inbound_spi );
-			
+
+    try {
+        this->xfrmAddUpdateIpsecSa(
+            (XFRM_MSG_UPDSA),
+            dst,
+            src,
+            childsa.ipsec_protocol,
+            childsa.mode,
+            childsa.inbound_spi,
+            getXfrmEncrAlgo( childsa.getProposal().getFirstTransformByType( Enums::ENCR ) ),
+            ( childsa.child_sa_initiator ) ? *childsa.keyring->sk_er : *childsa.keyring->sk_ei,
+            getXfrmIntegAlgo( childsa.getProposal().getFirstTransformByType( Enums::INTEG ) ),
+            ( childsa.child_sa_initiator ) ? *childsa.keyring->sk_ar : *childsa.keyring->sk_ai,
+            childsa.getChildSaConfiguration().lifetime_soft,
+            childsa.getChildSaConfiguration().lifetime_hard,
+            childsa.getChildSaConfiguration().max_bytes_hard,
+            0,
+            *childsa.peer_traffic_selector->getTrafficSelectors().front(),
+            *childsa.my_traffic_selector->getTrafficSelectors().front()
+        );
+    }catch(IpsecException & ex) {
+
+
+        try {
+            Log::writeLockedMessage( "IpsecController", "IPsec tunnel update fails, deleting it (inbound)", Log::LOG_WARN, true );
+            this->xfrmDeleteIpsecSa( dst, src, childsa.ipsec_protocol, childsa.inbound_spi );
+
                 }
-		catch(IpsecException & ex2){
-			Log::writeLockedMessage( "IpsecController", "Impossible deleting tunnel", Log::LOG_WARN, true );
-		}
-		
-		Log::writeLockedMessage( "IpsecController", "IPsec tunnel update fails, creating it (inbound)", Log::LOG_WARN, true );
+        catch(IpsecException & ex2){
+            Log::writeLockedMessage( "IpsecController", "Impossible deleting tunnel", Log::LOG_WARN, true );
+        }
 
-		this->xfrmAddUpdateIpsecSa(
-		    (XFRM_MSG_NEWSA),
-		    dst,
-		    src,
-		    childsa.ipsec_protocol,
-		    childsa.mode,
-		    childsa.inbound_spi,
-		    getXfrmEncrAlgo( childsa.getProposal().getFirstTransformByType( Enums::ENCR ) ),
-		    ( childsa.child_sa_initiator ) ? *childsa.keyring->sk_er : *childsa.keyring->sk_ei,
-		    getXfrmIntegAlgo( childsa.getProposal().getFirstTransformByType( Enums::INTEG ) ),
-		    ( childsa.child_sa_initiator ) ? *childsa.keyring->sk_ar : *childsa.keyring->sk_ai,
-		    childsa.getChildSaConfiguration().lifetime_soft,
-		    childsa.getChildSaConfiguration().lifetime_hard,
-		    childsa.getChildSaConfiguration().max_bytes_hard,
-		    0,
-		    *childsa.peer_traffic_selector->getTrafficSelectors().front(),
-		    *childsa.my_traffic_selector->getTrafficSelectors().front()
-		);
-	}
+        Log::writeLockedMessage( "IpsecController", "IPsec tunnel update fails, creating it (inbound)", Log::LOG_WARN, true );
+
+        this->xfrmAddUpdateIpsecSa(
+            (XFRM_MSG_NEWSA),
+            dst,
+            src,
+            childsa.ipsec_protocol,
+            childsa.mode,
+            childsa.inbound_spi,
+            getXfrmEncrAlgo( childsa.getProposal().getFirstTransformByType( Enums::ENCR ) ),
+            ( childsa.child_sa_initiator ) ? *childsa.keyring->sk_er : *childsa.keyring->sk_ei,
+            getXfrmIntegAlgo( childsa.getProposal().getFirstTransformByType( Enums::INTEG ) ),
+            ( childsa.child_sa_initiator ) ? *childsa.keyring->sk_ar : *childsa.keyring->sk_ai,
+            childsa.getChildSaConfiguration().lifetime_soft,
+            childsa.getChildSaConfiguration().lifetime_hard,
+            childsa.getChildSaConfiguration().max_bytes_hard,
+            0,
+            *childsa.peer_traffic_selector->getTrafficSelectors().front(),
+            *childsa.my_traffic_selector->getTrafficSelectors().front()
+        );
+    }
 
     }
 
