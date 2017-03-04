@@ -396,7 +396,7 @@ namespace openikev2 {
 
 
     uint32_t IpsecControllerImplPfkeyv2::getSpi( const IpAddress & src, const IpAddress & dst, Enums::PROTOCOL_ID protocol ) {
-    
+
         uint32_t spi = this->pfkeyGetSpi( src, dst, protocol );
         return spi;
     }
@@ -799,7 +799,6 @@ namespace openikev2 {
 
     auto_ptr<Policy> IpsecControllerImplPfkeyv2::msg2Policy( sadb_msg * spd_dump_response ) {
         auto_ptr<Policy> result ( new Policy() );
-
         uint8_t* message_headers[SADB_EXT_MAX + 1];
 
         // Align message headers
@@ -1075,67 +1074,6 @@ namespace openikev2 {
                 delete[] ext_hdrs[i];
     }
 
-    bool IpsecControllerImplPfkeyv2::narrowPayloadTS( const Payload_TSi & received_payload_ts_i, const Payload_TSr & received_payload_ts_r, IkeSa & ike_sa, ChildSa & child_sa ) {
-        vector<TrafficSelector*> ts_i_collection = received_payload_ts_i.getTrafficSelectors();
-        vector<TrafficSelector*> ts_r_collection = received_payload_ts_r.getTrafficSelectors();
-
-        auto_ptr<TrafficSelector> best_ts_i ;
-        auto_ptr<TrafficSelector> best_ts_r ;
-
-        // If an address is assigned, then create the RW policies and change the TS_i for the assgined address
-        // This is done to avoid to make an erroneous narrowing if there are more than one applicable policy in the SPD
-        AddressConfiguration * address_configuration = child_sa.attributemap->getAttribute<AddressConfiguration>( "address_configuration" );
-        if ( address_configuration != NULL && address_configuration->role == AddressConfiguration::CONFIGURATION_IRAS ) {
-            // modify the TSi selector
-            TrafficSelector* front = ts_i_collection.front();
-            front->start_addr = address_configuration->assigned_address->getBytes();
-            front->end_addr = address_configuration->assigned_address->getBytes();
-            ts_i_collection.clear();
-            ts_i_collection.push_back( front );
-
-            // Creates the RW policies
-            bool rv = this->createRwPolicies( *address_configuration->assigned_address, child_sa, ike_sa );
-            if ( !rv )
-                return false;
-        }
-
-        // Look for a policy that matches with the indicated attributes
-        for ( int16_t i = 0; i < ts_i_collection.size(); i++ ) {
-            for ( int16_t j = 0; j < ts_r_collection.size() ; j++ ) {
-                // Look for a matching inbound policy
-                Policy *inbound_policy = findIpsecPolicy( *ts_i_collection[ i ], *ts_r_collection[ j ], Enums::DIR_IN, child_sa.mode, child_sa.ipsec_protocol, ike_sa.peer_addr->getIpAddress(), ike_sa.my_addr->getIpAddress() );
-                if ( inbound_policy == NULL )
-                    continue;
-
-                // And for a matching outbound policy
-                Policy *outbound_policy = findIpsecPolicy( *ts_r_collection[ j ], *ts_i_collection[ i ], Enums::DIR_OUT, child_sa.mode, child_sa.ipsec_protocol, ike_sa.my_addr->getIpAddress(), ike_sa.peer_addr->getIpAddress() );
-                if ( outbound_policy == NULL )
-                    continue;
-
-                // if both are acceptables, then insersec proposed selectors with policy selectors
-                auto_ptr<TrafficSelector> policy_ts_i = inbound_policy->getSrcTrafficSelector();
-                auto_ptr<TrafficSelector> policy_ts_r = outbound_policy->getSrcTrafficSelector();
-
-                // if these are the bigger selectors for the moment, update them
-                if ( ( best_ts_i.get() == NULL ) ||
-                        ( ( *policy_ts_i >= *best_ts_i ) && ( *policy_ts_r >= *best_ts_r ) ) ) {
-                    best_ts_i = policy_ts_i;
-                    best_ts_r = policy_ts_r;
-                }
-
-            }
-        }
-
-        // If there are acceptable traffic selectors, then update the CHILD_SA
-        if ( best_ts_i.get() ) {
-            child_sa.my_traffic_selector.reset ( new Payload_TSi( best_ts_r ) );
-            child_sa.peer_traffic_selector.reset ( new Payload_TSr ( best_ts_i ) );
-            return true;
-        }
-
-        return false;
-    }
-
     Policy & IpsecControllerImplPfkeyv2::getPolicyById( uint32_t id ) {
         AutoLock auto_lock( *this->mutex_policies );
 
@@ -1145,51 +1083,6 @@ namespace openikev2 {
 
         throw PfkeyException( "Policy ID not found in SPD" );
     }
-
-    Policy * IpsecControllerImplPfkeyv2::findIpsecPolicy( const TrafficSelector & ts_i, const TrafficSelector & ts_r, Enums::DIRECTION dir, Enums::IPSEC_MODE mode, Enums::PROTOCOL_ID ipsec_protocol, const IpAddress & tunnel_src, const IpAddress & tunnel_dst ) {
-        AutoLock auto_lock ( *this->mutex_policies );
-
-        // Look in all the policies for a match
-        for ( uint16_t i = 0; i < this->ipsec_policies->size(); i++ ) {
-            Policy *policy = ipsec_policies[ i ];
-
-            if ( policy->direction != dir )
-                continue;
-
-            // If policy is "none" omit it
-            if ( policy->sa_request.get() == NULL )
-                continue;
-
-            if ( policy->sa_request->ipsec_protocol != ipsec_protocol )
-                continue;
-
-            if ( policy->sa_request->mode != mode )
-                continue;
-
-            // Compare tunnel dir
-            if ( mode == Enums::TUNNEL_MODE )
-                if ( ! ( *policy->sa_request->tunnel_src == tunnel_src ) || !( *policy->sa_request->tunnel_dst == tunnel_dst ) )
-                    continue;
-
-            // Gets policy traffic selectors
-            auto_ptr<TrafficSelector> policy_ts_i = policy->getSrcTrafficSelector();
-            auto_ptr<TrafficSelector> policy_ts_r = policy->getDstTrafficSelector();
-
-            if ( *policy_ts_i <= ts_i && *policy_ts_r <= ts_r )
-                return policy;
-        }
-
-        return NULL;
-    }
-
-    bool IpsecControllerImplPfkeyv2::checkNarrowPayloadTS( const Payload_TSi & received_payload_ts_i, const Payload_TSr & received_payload_ts_r, ChildSa & child_sa ) {
-        // no narrowing is accepted when acting as initiator
-        if ( ( received_payload_ts_i == *child_sa.my_traffic_selector ) && ( received_payload_ts_r == *child_sa.peer_traffic_selector ) )
-            return true;
-        else
-            return false;
-    }
-
 
     void IpsecControllerImplPfkeyv2::createIpsecPolicy( vector<TrafficSelector*> src_sel, vector<TrafficSelector*> dst_sel, Enums::DIRECTION direction, Enums::POLICY_ACTION action, uint32_t priority, Enums::PROTOCOL_ID ipsec_protocol, Enums::IPSEC_MODE mode, const IpAddress * src_tunnel, const IpAddress * dst_tunnel , bool autogen, bool sub) {
         uint16_t src_prefix, dst_prefix;
@@ -1277,35 +1170,6 @@ namespace openikev2 {
         this->pfkeyReceive( fd, retmsg.hdr, sizeof( retmsg ) );
         this->pfkeyParseExthdrs( retmsg.hdr, ext_hdrs );
         close( fd );
-    }
-
-
-    bool IpsecControllerImplPfkeyv2::createRwPolicies( IpAddress& rw_address, ChildSa& child_sa, IkeSa& ike_sa ) {
-        // Obtain the protected subnet attributes
-        string attribute_name = ( ike_sa.my_addr->getIpAddress().getFamily() == Enums::ADDR_IPV4 ) ? "protected_ipv4_subnet" : "protected_ipv6_subnet";
-        NetworkPrefix* protected_subnet = ike_sa.getIkeSaConfiguration().attributemap->getAttribute<NetworkPrefix>( attribute_name );
-        if ( protected_subnet == NULL ) {
-            Log::writeLockedMessage( "IpsecControllerImplXfrm", "Cannot find the protected subnet attribute", Log::LOG_ERRO, true );
-            return false;
-        }
-
-        auto_ptr<Payload_TS> policy_ts_i ( new Payload_TSi( auto_ptr<TrafficSelector> ( new TrafficSelector( rw_address, rw_address.getAddressSize() * 8, 0, Enums::IP_PROTO_ANY ) ) ) );
-        auto_ptr<Payload_TS> policy_ts_r ( new Payload_TSr( auto_ptr<TrafficSelector> ( new TrafficSelector( protected_subnet->getNetworkAddress(), protected_subnet->getPrefixLen(), 0, Enums::IP_PROTO_ANY ) ) ) );
-
-        try {
-            this->createIpsecPolicy( policy_ts_r->getTrafficSelectors(), policy_ts_i->getTrafficSelectors(), Enums::DIR_OUT, Enums::POLICY_ALLOW, 0, child_sa.ipsec_protocol, child_sa.mode, &ike_sa.my_addr->getIpAddress(), &ike_sa.peer_addr->getIpAddress() );
-            this->createIpsecPolicy( policy_ts_i->getTrafficSelectors(), policy_ts_r->getTrafficSelectors(), Enums::DIR_FWD, Enums::POLICY_ALLOW, 0, child_sa.ipsec_protocol, child_sa.mode, &ike_sa.peer_addr->getIpAddress(), &ike_sa.my_addr->getIpAddress() );
-            this->createIpsecPolicy( policy_ts_i->getTrafficSelectors(), policy_ts_r->getTrafficSelectors(), Enums::DIR_IN, Enums::POLICY_ALLOW, 0, child_sa.ipsec_protocol, child_sa.mode, &ike_sa.peer_addr->getIpAddress(), &ike_sa.my_addr->getIpAddress() );
-        }
-        catch ( IpsecException ex ) {
-            Log::writeLockedMessage( "IpsecControllerImplXfrm", "Cannot create the RW policies for assigned address=[" + rw_address.toString() + "]", Log::LOG_ERRO, true );
-            return false;
-        }
-
-        Log::writeLockedMessage( "IpsecControllerImplXfrm", "Creating RW policies for assigned address=[" + rw_address.toString() + "]", Log::LOG_INFO, true );
-        child_sa.attributemap->addAttribute( "rw_policies", auto_ptr<Attribute> ( new RoadWarriorPolicies( rw_address.clone(), policy_ts_i, policy_ts_r ) ) );
-
-        return true;
     }
 
     void IpsecControllerImplPfkeyv2::exit() {

@@ -52,9 +52,6 @@ namespace openikev2 {
     */
     class IpsecControllerImplPfkeyv2 : public IpsecControllerImplOpenIKE {
         protected:
-            AutoVector<Policy> ipsec_policies;;         /**< Collection of IPsec policies. */
-            auto_ptr<Mutex> mutex_policies;             /**< Mutex to controls policies acceses. */
-
             int32_t pfkey_bd_socket;                    /**< PF_KEY broadcast socket used to process ACQUIRES and EXPIRES. */
             uint32_t sequence_number;                   /**< PF_KEY message sequence number. */
 
@@ -257,22 +254,6 @@ namespace openikev2 {
              */
             virtual Policy& getPolicyById( uint32_t id );
 
-            /**
-             * Finds a policy matching with the indicated parameters.
-             * @param ts_i Initiator traffic selector.
-             * @param ts_r Responder traffic selector.
-             * @param dir Direction.
-             * @param mode IPsec mode of the SaRequest.
-             * @param ipsec_protocol IPsec protocol of the SaRequest.
-             * @param tunnel_src Tunnel source address.
-             * @param tunnel_dst Tunnel destination address.
-             * @param child_sa The Child_SA in order to establish the inbound and outbound selectors after the narrowing process
-             * @return Matching policy. NULL if not founded.
-             */
-            virtual Policy* findIpsecPolicy( const TrafficSelector & ts_i, const TrafficSelector & ts_r, Enums::DIRECTION dir, Enums::IPSEC_MODE mode, Enums::PROTOCOL_ID ipsec_protocol, const IpAddress & tunnel_src, const IpAddress & tunnel_dst );
-
-            virtual bool createRwPolicies( IpAddress& rw_address, ChildSa& child_sa, IkeSa& ike_sa );
-
         public:
             /**
              * Creates a new IPSEC_ControllerImpl_PFKEYv2.
@@ -280,10 +261,6 @@ namespace openikev2 {
             IpsecControllerImplPfkeyv2();
 
             virtual void run();
-
-            virtual bool narrowPayloadTS( const Payload_TSi & received_payload_ts_i, const Payload_TSr & received_payload_ts_r, IkeSa& ike_sa, ChildSa & child_sa );
-
-            virtual bool checkNarrowPayloadTS( const Payload_TSi & received_payload_ts_i, const Payload_TSr & received_payload_ts_r, ChildSa & child_sa );
 
             virtual uint32_t getSpi( const IpAddress& src, const IpAddress& dst, Enums::PROTOCOL_ID protocol );
 

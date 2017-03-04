@@ -45,8 +45,6 @@ namespace openikev2 {
 
             /****************************** ATTRIBUTES ******************************/
         protected:
-            AutoVector<Policy> ipsec_policies;  /**< Collection of IPsec policies. */
-            auto_ptr<Mutex> mutex_policies;     /**< Mutex to control policies acceses. */
             int32_t netlink_bcast_fd;           /**< Socket to receive broadcast messages */
             uint32_t sequence_number;           /**< Message sequence number. */
             bool exiting;                       /**< Indicates if controller must exit */
@@ -208,20 +206,6 @@ namespace openikev2 {
             virtual Policy& getIpsecPolicyById( uint32_t id );
 
             /**
-             * Finds a policy matching with the indicated parameters.
-             * @param ts_i Initiator traffic selector.
-             * @param ts_r Responder traffic selector.
-             * @param dir Direction.
-             * @param mode IPsec mode of the SaRequest.
-             * @param ipsec_protocol IPsec protocol of the SaRequest.
-             * @param tunnel_src Tunnel source address.
-             * @param tunnel_dst Tunnel destination address.
-             * @param child_sa The Child_SA in order to establish the inbound and outbound selectors after the narrowing process
-             * @return Matching policy. NULL if not founded.
-             */
-            virtual Policy* findIpsecPolicy( const TrafficSelector & ts_i, const TrafficSelector & ts_r, Enums::DIRECTION dir, Enums::IPSEC_MODE mode, Enums::PROTOCOL_ID ipsec_protocol, const IpAddress & tunnel_src, const IpAddress & tunnel_dst );
-
-            /**
              * Updates the list of policies. It must by performed after create or delete policies.
              * @param show Indicate if all the policies detected must be printed
              */
@@ -232,9 +216,6 @@ namespace openikev2 {
             virtual uint16_t getXfrmSrcPort( const TrafficSelector& ts_i, const TrafficSelector& ts_r );
             virtual uint16_t getXfrmDstPort( const TrafficSelector& ts_i, const TrafficSelector& ts_r );
 
-            virtual bool processTrafficSelectorsRoadWarrior( const Payload_TSi & received_payload_ts_i, const Payload_TSr & received_payload_ts_r, IkeSa& ike_sa, ChildSa & child_sa );
-            virtual bool processTrafficSelectors( const Payload_TSi & received_payload_ts_i, const Payload_TSr & received_payload_ts_r, IkeSa& ike_sa, ChildSa & child_sa );
-
         public:
             /**
              * Creates a new IpsecControllerImplXfrm
@@ -242,10 +223,6 @@ namespace openikev2 {
             IpsecControllerImplXfrm();
 
             virtual void run();
-
-            virtual bool narrowPayloadTS( const Payload_TSi & received_payload_ts_i, const Payload_TSr & received_payload_ts_r, IkeSa& ike_sa, ChildSa & child_sa );
-
-            virtual bool checkNarrowPayloadTS( const Payload_TSi & received_payload_ts_i, const Payload_TSr & received_payload_ts_r, ChildSa & child_sa );
 
             virtual uint32_t getSpi(const IpAddress& src, const IpAddress& dst, Enums::PROTOCOL_ID protocol);
 
@@ -264,9 +241,9 @@ namespace openikev2 {
             virtual void exit();
 
             virtual void printPolicies();
-            
+
             virtual void updateIpsecSaAddresses(const IpAddress& old_address, const IpAddress& new_address);
-            
+
             virtual void updateIpsecPolicyAddresses(const IpAddress& old_address, const IpAddress& new_address);
 
             virtual ~IpsecControllerImplXfrm();
