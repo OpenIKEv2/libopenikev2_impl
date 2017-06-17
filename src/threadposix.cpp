@@ -60,6 +60,7 @@ namespace openikev2 {
     void * ThreadPosix::real_run( void * param ) {
         ThreadPosix * thread = ( ThreadPosix* ) param;
         thread->run();
+        return NULL;
     }
 
 }

@@ -66,6 +66,24 @@ namespace openikev2 {
         ( uint8_t ) sizeof( struct sadb_x_nat_t_port ),
         ( uint8_t ) sizeof( struct sadb_x_nat_t_port ),
         ( uint8_t ) sizeof( struct sadb_address ),
+        ( uint8_t ) 0,  // these are just to be safe upon new insertions
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
+        ( uint8_t ) 0,
     };
 
     IpsecControllerImplPfkeyv2::IpsecControllerImplPfkeyv2() {
@@ -505,7 +523,6 @@ namespace openikev2 {
         this->pfkeySend( fd, &hdr, ext_hdrs );
         this->pfkeyDeleteExtHdrs( ext_hdrs );
 
-
         struct {
             sadb_msg hdr;
             uint8_t buffer[MAX_PFKEY_RECV_SIZE];
@@ -517,6 +534,7 @@ namespace openikev2 {
         if ( response.hdr.sadb_msg_type != SADB_X_SPDADD || response.hdr.sadb_msg_errno != 0 ) {
             throw IpsecException( "Error performing an CREATE POLICY action" );
         }
+        delete request;
     }
 
     void IpsecControllerImplPfkeyv2::pfkeyDeleteIpsecPolicy( IpAddress & src_selector, uint8_t src_prefixlen, uint16_t src_port, IpAddress & dst_selector, uint8_t dst_prefixlen, uint16_t dst_port, uint8_t ip_protocol, Enums::DIRECTION dir ) {

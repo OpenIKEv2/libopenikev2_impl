@@ -31,6 +31,7 @@ namespace openikev2 {
             OpenSSL_add_all_algorithms();
             initialized = true;
         }
+        this->send_cert_req = false;
     }
 
     AuthVerifierCert::~AuthVerifierCert() {}

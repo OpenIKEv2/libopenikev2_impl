@@ -102,6 +102,8 @@ namespace openikev2 {
         int32_t fd;
         struct sockaddr_ll sock;
 
+        memset(&sock, 0, sizeof(sockaddr_ll));
+
         if ( ( fd = socket( PF_PACKET, SOCK_DGRAM, htons( ETH_P_IP ) ) ) < 0 )
             throw NetworkException ( "DhcpClient: socket call failed" );
 
@@ -309,6 +311,7 @@ namespace openikev2 {
     int32_t DhcpClient::readMac( string interface, uint8_t * macaddr ) {
         int fd;
         struct ifreq ifr;
+        int rc = 0;
 
         memset( &ifr, 0, sizeof( struct ifreq ) );
         if ( ( fd = socket( AF_INET, SOCK_RAW, IPPROTO_RAW ) ) >= 0 ) {
@@ -319,14 +322,14 @@ namespace openikev2 {
                 memcpy( macaddr, ifr.ifr_hwaddr.sa_data, 6 );
             } else {
                 Log::writeLockedMessage( "DhcpClient", "SIOCGIFHWADDR failed!", Log::LOG_DHCP, true );
-                return -1;
+                rc = -1;
             }
         } else {
             Log::writeLockedMessage( "DhcpClient", "Socket failed!", Log::LOG_DHCP, true );
-            return -1;
+            rc = -1;
         }
         close( fd );
-        return 0;
+        return rc;
     }
 
     int32_t DhcpClient::sendDhcpDiscover( uint64_t xid, uint32_t requested ) {
